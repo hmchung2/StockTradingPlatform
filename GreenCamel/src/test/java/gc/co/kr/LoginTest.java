@@ -39,7 +39,7 @@ public class LoginTest {
 	public void login() throws Exception{
 		MemberVO member = new MemberVO();
 		member.setId("user");
-		MemberVO userVO = memberService.login(member);
+		MemberVO userVO = memberService.signin(member);
 		System.out.println(userVO);
 	}
 	

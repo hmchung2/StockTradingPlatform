@@ -12,8 +12,8 @@ public class MemberDAOImpl implements MemberDAO{
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 	
-	public MemberVO login(MemberVO member) {		
-		MemberVO userVO = sqlSessionTemplate.selectOne("member.MemberDAO.selectByID" , member);		
+	public MemberVO signin(MemberVO member) {		
+		MemberVO userVO = sqlSessionTemplate.selectOne("member.MemberDAO.signin" , member);		
 		return userVO;
 	}	
 }	

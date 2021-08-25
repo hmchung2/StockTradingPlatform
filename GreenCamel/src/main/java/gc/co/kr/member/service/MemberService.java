@@ -4,6 +4,6 @@ import gc.co.kr.member.vo.MemberVO;
 
 public interface MemberService {
 	
-	MemberVO login(MemberVO member);
+	MemberVO signin(MemberVO member);
 
 }

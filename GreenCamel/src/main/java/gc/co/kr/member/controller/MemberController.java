@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 import gc.co.kr.member.service.MemberService;
 import gc.co.kr.member.vo.MemberVO;
@@ -18,19 +19,21 @@ public class MemberController {
 	@Autowired
 	private MemberService service;
 		
-	@GetMapping("/login")
+	@GetMapping("/signin")
 	public String loginForm() {
-		return "login/login";
+		return "member/signin";
 	}
 
-	@PostMapping("/login")
+	@PostMapping("/signin")
 	public String login(MemberVO member, Model model, HttpSession session) {
-		MemberVO userVO = service.login(member);
+		System.out.println("info"  +  member);
+		MemberVO userVO = service.signin(member);
+		System.out.println("userVO : "  +  userVO);
 		String msg = "";
 		String view = "";
 		if (userVO == null) {
 			msg = "아이디 또는 패스워드가 잘못되었습니다.";
-			view = "login/login";
+			view = "member/signin";
 			model.addAttribute("msg", msg);
 		} else {
 			
@@ -48,4 +51,20 @@ public class MemberController {
 		}
 		return view;
 	}
+	
+	
+	@GetMapping("/signout")
+	public String login(SessionStatus sessionStatus) {
+		
+		sessionStatus.setComplete();		
+		return "redirect:/";
+	}
+	
+	
+	@GetMapping("/signup")
+	public String signup() {
+		System.out.println("회원가입 신청");
+		return "member/signup";
+	}
+	
 }
