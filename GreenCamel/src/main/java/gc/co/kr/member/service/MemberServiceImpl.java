@@ -17,7 +17,20 @@ public class MemberServiceImpl implements MemberService{
 		MemberVO userVO = memberDAO.signin(member);
 		return userVO;
 	}
-	
-	
+
+	@Override
+	public int signup(MemberVO member) {
+		// TODO Auto-generated method stub		
+		int row = memberDAO.signup(member);
+		return row;
+	}
+
+	@Override
+	public MemberVO selectByID(String id) {
+		// TODO Auto-generated method stub
+		MemberVO existingUser   =  memberDAO.selectByID(id);
+		return existingUser;
+	}
+		
 	
 }

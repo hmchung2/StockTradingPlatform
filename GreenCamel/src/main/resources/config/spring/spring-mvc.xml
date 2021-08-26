@@ -47,9 +47,11 @@
 			<mvc:mapping path="/**"/>
 			<mvc:exclude-mapping path="/signin"/>
 			<mvc:exclude-mapping path="/signup"/>
+			<mvc:exclude-mapping path="/signcontract"/>
 			<mvc:exclude-mapping path="/resources/**"/>
 			<mvc:exclude-mapping path="/"/>
 			<mvc:exclude-mapping path="/board"/>
+			<mvc:exclude-mapping path="/ajax/**"/>
 			<ref bean="signinInterceptor"/>
 		</mvc:interceptor>
 		
@@ -60,6 +62,7 @@
 		
 		<mvc:interceptor>
 			<mvc:mapping path="/signin"/>
+			<mvc:mapping path="/signcontract"/>
 			<mvc:mapping path="/signup"/>
 			<ref bean="signoutInterceptor"/>
 		</mvc:interceptor>

@@ -23,7 +23,6 @@ public class MemberController {
 	public String loginForm() {
 		return "member/signin";
 	}
-
 	@PostMapping("/signin")
 	public String login(MemberVO member, Model model, HttpSession session) {
 		System.out.println("info"  +  member);
@@ -52,19 +51,50 @@ public class MemberController {
 		return view;
 	}
 	
-	
 	@GetMapping("/signout")
-	public String login(SessionStatus sessionStatus) {
-		
+	public String login(SessionStatus sessionStatus) {		
 		sessionStatus.setComplete();		
 		return "redirect:/";
 	}
 	
+	@GetMapping("/signcontract")
+	public String signContract() {				
+		System.out.println("이용약관");		
+		return "member/signcontract";		
+	}
 	
 	@GetMapping("/signup")
-	public String signup() {
+	public String signup(Model model) {
 		System.out.println("회원가입 신청");
+		model.addAttribute("memberVO", new MemberVO());		
 		return "member/signup";
+	}	
+	
+	
+	@PostMapping("/signup")
+	public String signup(MemberVO member, Model model, HttpSession session) {
+		System.out.println("info : " + member);
+		int row = service.signup(member);
+		String msg = "";
+		String view = "";
+		if(row != 1) {
+			view = "member/signin";			
+			msg = "서버 문제로 회원가입에 실패 하셨습니다.";
+			model.addAttribute("msg", msg);			
+		}else {			
+			MemberVO userVO = member;
+			model.addAttribute("userVO", userVO);
+			msg = "환영합니다. " + userVO.getName() + "님";
+			session.setAttribute("msg", msg);
+			String dest = (String) session.getAttribute("dest");
+			if (dest != null) {
+				session.removeAttribute("dest");
+				view = "redirect:" + dest;
+			} else {
+				view = "redirect:/";
+			}
+		}
+		return view;
 	}
 	
 }

@@ -30,9 +30,12 @@ public class SigninInterceptor extends HandlerInterceptorAdapter{
 			// if(query != null) uri = uri + "?"  query
 			
 			
-			response.sendRedirect(request.getContextPath() +  "/login");
+			response.sendRedirect(request.getContextPath() +  "/signin");
 			return false;
 		}				
 		return true;		
 	}
+	
+	
+	
 }

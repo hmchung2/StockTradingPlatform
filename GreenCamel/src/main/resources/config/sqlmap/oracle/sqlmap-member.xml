@@ -14,14 +14,21 @@
 			from gc_user
 	</select>
 	
-	<select id="selectByID" resultMap = "memberMap" parameterType="memberVO">
+	<select id="selectByID" resultMap = "memberMap" parameterType="string">
 		select id, user_type , email , phone, password, name, to_char(reg_date , 'yyyy-mm-dd') as reg_date
 		from gc_user where id = #{id}
 	</select>
 	
 	<select id="signin" resultMap = "memberMap" parameterType="memberVO">
 		select id, user_type , email , phone, password, name, to_char(reg_date , 'yyyy-mm-dd') as reg_date
-		from gc_user where id = #{id} and password =#{password}
+		from gc_user where id = #{id} and password = #{password}
 	</select>
+	
+	
+	<insert id="signup" parameterType="memberVO">
+		insert into gc_user(id , user_type, email, phone, password, name)
+		 values (#{id}, #{userType} , #{email} , #{phone} , #{password} , #{name} )
+	</insert>
+
 		
 </mapper>

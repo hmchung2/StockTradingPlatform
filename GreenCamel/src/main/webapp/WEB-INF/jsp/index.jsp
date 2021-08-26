@@ -16,7 +16,7 @@ hello <br>
 	<a href="${pageContext.request.contextPath}/signout">로그아웃</a><br>	
 </c:if>
 
-<a href="${pageContext.request.contextPath}/signup">회원가입 하기</a><br>
+<a href="${pageContext.request.contextPath}/signcontract">회원가입 하기</a><br>
 
 </body>
 </html>
