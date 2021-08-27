@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -27,18 +28,21 @@ public class MybatisTest {
 	private SqlSessionTemplate sessionTemplate;
 	
 	
-		
+	@Ignore	
 	@Test
 	public void DataSourceCreatetest() throws Exception{
 		System.out.println("datasource : " + dataSource);
 		assertNotNull(dataSource);
 	}	
-			
+	
+	@Ignore
 	@Test
 	public void mybatisCreatetest() throws Exception{
 		assertNotNull(sqlFactory);
 		assertNotNull(sessionTemplate);
 		
 	}
+	
+
 	
 }

@@ -55,7 +55,7 @@ function checkRequired() {
 		}
 	}
 	if (cnt == length) {
-		location.href="${pageContext.request.contextPath }/signup/1"
+		location.href="${pageContext.request.contextPath }/account/create"
 	} else {
 		$(".required input").css("outline", "2px solid #0d6efd")
 	}

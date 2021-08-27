@@ -13,13 +13,11 @@
 
 
 
-<script>	
-	$(document).ready(function() {
-		
-		let idChk = "false"
-		let emailChk = "false"
-		
-		
+<script>
+	let idChk = "false"
+	let emailChk = "false"
+	
+	$(document).ready(function() {	
 		$('#myMsg').hover(function() {
 			$(this).css("color" , "white")
 		}, function() {
@@ -28,16 +26,42 @@
 		
 		$('#id_id').change(function(){
 			idChk = "false"
-			let outmsg = "중복확인 필요합니다...";
+			outmsg = "중복확인 필요합니다...";
 			if($('#id_id').val().length < 5 ){
 				outmsg = "5글자 이상 필요합니다."
+				$("#idCkMessage").html(outmsg)
 			}else if($('#id_id').val().length > 30 ){
 				outmsg = "30글자 초과 할 수 없습니다."
+				$("#idCkMessage").html(outmsg)
 			}else{
-				outmsg = idcheckAJAX()
+				let id = $("#id_id").val()
+				console.log("checking id  -> " +  id );
+				
+				$.ajax({
+					type: 'get',
+					url: "${pageContext.request.contextPath }/ajax/restBody.json",
+					data : {
+						id : id				
+					},
+					contentType: "application/x-www-form-urlencoded;charset=ISO-8859-15",
+					datatype: 'json',
+					success: function(data){
+						console.log(data)
+						console.log("success")
+						if(data["result"] == "true"){							 
+							outmsg  = "사용 할 수 있는 아이디 입니다.";
+							idChk  = "true";							
+						}else{
+							outmsg = "이미 사용중인 아이디 입니다."										
+						}
+						$("#idCkMessage").html(outmsg)
+					},
+					error : function(){
+						outmsg  = "아이디 중복확인중 문제가 발생 했습니다."
+					}			
+				});
 			}
-			
-			$("#idCkMessage").html(outmsg)
+
 		})
 			
 		$('#selectEmail').change(function() {
@@ -50,90 +74,55 @@
 					$("#str_email02").attr("disabled", true); //비활성화 
 				}
 			});
-		});
-		
+		});		
 		  $("#myModal").click(function(){
 			    $(".modal").fadeIn();
-		  });
-		  
+		  });		  
 		  $(".exiting").click(function(){
 			  $(".modal").fadeOut();
 		  })	
 	})
 	
-
-
 	function firstValidate() {	
 		let check = false;
-		let msg = ""
-		
+		let msg = ""		
 		if(idChk == "false"){
 			msg = "아이디 중복확인이 필요합니다."
-			alert(idChk)
-		}
-		else if($("#pw1").val() == "" ){
+		}else if($("#pw1").val() == "" ){
 			msg = "비밀번호를 입력 바랍니다."			
 		}
 		else if($('#pw1').val().length < 5 ){
 			msg = "비밀번호는 최소 다섯 글자 이상 필요 합니다."			
 		}
-		else if ($("#pw1").val() != $("#pw2").val()) {
-			msg = "비빌번호를 정확히 재입력 바랍니다."		
+		else if($("#pw1").val() != $("#pw2").val()) {
+			msg = "비빌번호를 정확히 재입력 바랍니다."
 		} else if($("#id_id").legnth < 5 ){
 			msg = "아이디는 최소 다섯 글자 이상 필요합니다."			
 		} else{			
-			return true;
+			check = true;
 		}
-		$("#sendingMyMsg").text(msg)
-		$("#myModal").trigger("click");
+		if(check){
+			let fullEmail  = $("#str_email01").val() + "@" + $("#str_email02").val() 
+			console.log("full Email : " + fullEmail)
+			$("#hiddenEmail").val( fullEmail )
 			
+			let fullPhone = $("#phoneCompany").val() + $("#phoneDigits").val()
+			console.log("full Phone : " + fullPhone)
+			$("#hiddenPhone").val(fullPhone)						
+		}else{
+			//$("#sendingMyMsg").text(msg)
+			//$("#myModal").trigger("click");		
+			alert(msg)
+		}
 		return check
 	}
-	
-
-	
-	function idcheckAJAX(){
-		console.log("id checking")
-		msg = ""
-		let id =  $("#id_id").val()
-		console.log("id check -> id :  " + id)				
-		$.ajax({
-			type: 'get',
-			url: "${pageContext.request.contextPath }/ajax/restBody.json",
-			data : {
-				id : id				
-			},
-			contentType: "application/x-www-form-urlencoded;charset=ISO-8859-15",
-			datatype: 'json',
-			success: function(data){
-				console.log(data)
-				console.log("success")
-				if(data["result"] == "true"){
-					msg = "사용 할 수 있는 아이디 입니다."
-					idChk = "true"
-				}else{
-					msg = "이미 사용중인 아이디 입니다."					
-				}				
-				console.log("id check return : " + data)
-				$("#idCkMessage").html(msg)
-			},
-			error : function(){
-				msg = "아이디 중복확인중 문제가 발생 했습니다."
-				console.log("failed")
-				$("#idCkMessage").html(msg)
-			}			
-		})
-		console.log("ajax msg : " + msg)
-		return msg;
-	}
-	
 	
 </script>
 
 </head>
 <body>
 	회원가입
-	<form:form method="post" onsubmit="return firstValidate()" modelAttribute="memberVO">
+	<form:form method="post" onsubmit="return firstValidate();" modelAttribute="memberVO">
 		<table style="width: 80%;">
 			<tr>
 				<th><span> <i class="fa fa-id-badge"></i></span></th>
@@ -157,7 +146,7 @@
 			</tr>
 			<tr>
 				<th><span> <i class="fa fa-envelope"></i></span></th>
-				<td><input type="text" name=str_email01 placeholder="이메일">&nbsp; @ <input type="text" name="str_email02" id="str_email02" style="width: 30%;" disabled value="naver.com"> <select style="width: 20%; margin-right: 0px" name="selectEmail" id="selectEmail">
+				<td><input type="text" id="str_email01" name="str_email01" placeholder="이메일">&nbsp; @ <input type="text" name="str_email02" id="str_email02" style="width: 30%;" disabled value="naver.com"> <select style="width: 20%; margin-right: 0px" name="selectEmail" id="selectEmail">
 						<option value="1">직접입력</option>
 						<option value="naver.com" selected>naver.com</option>
 						<option value="hanmail.net">hanmail.net</option>
@@ -173,27 +162,26 @@
 						<option value="hanmir.com">hanmir.com</option>
 						<option value="paran.com">paran.com</option>
 				</select></td>
-				<form:input path="email" hidden="true"/>
+				<form:input id="hiddenEmail" path="email" hidden="true"/>
 				<form:errors path="email" class="error"/>
 			</tr>
 			
-			
-			
 			<tr>
 				<th><span> <i class="fa fa-phone"></i></span></th>
-				<td><select name="threeDigits" style="max-width: 120px;">
+				<td><select id="phoneCompany" name="threeDigits" style="max-width: 120px;">
 						<option selected>010-</option>
 						<option value="1">012-</option>
 						<option value="2">031-</option>
 						<option value="3">017-</option>
-				</select> <input name="phone" pattern="\d{3,4}-\d{4}" placeholder="핸드폰 번호 : xxxx-xxxx 형식으로 입력하세요" type="tel"></td>
-				<form:input path="phone" hidden="true"/> 
+				</select> <input id="phoneDigits" name="phoneDigits" pattern="\d{3,4}-\d{4}" placeholder="핸드폰 번호 : xxxx-xxxx 형식으로 입력하세요" type="tel"></td>
+				<form:input id="hiddenPhone" path="phone" hidden="true"/> 
 				<form:errors path="phone" class="error"/>
 			</tr>
 			<tr>
 				<th></th>
 				<td>
-					<button type="submit">Create Account</button>
+					<input id=submitButton type="submit" value="Submit" />Create Account
+					<!-- <button type="submit">Create Account</button> -->
 					<p>
 						이미 회원 이십니까? <a href="${pageContext.request.contextPath }/signin">로그인</a>
 					</p>

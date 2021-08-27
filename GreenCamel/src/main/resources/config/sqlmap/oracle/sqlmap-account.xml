@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="account.AccountDAO">
+
+	<resultMap type="accountVO" id="accountMap">
+		<result column="gca_number" property="gcaNumber"></result>
+		<result column="gca_password" property="gcaPassword"></result>
+		<result column="reg_date" property="regDate"></result>	
+	</resultMap>
+	
+	<select id="selectByAccNum" resultMap="accountMap" parameterType="string">
+		select gca_number, nick, id, gca_password, balance, to_char(reg_date , 'yyyy-mm-dd') as reg_date		
+		from gc_account where gca_number = #{gca_number}
+	</select>
+	
+	<insert id="createAcc" parameterType="accountVO">
+		insert into gc_account(gca_number, nick, id, gca_password, balance ) 
+		values(#{gcaNumber} , #{nick, jdbcType=VARCHAR}  , #{id} , #{gcaPassword},  #{balance} )
+	</insert>		
+	
+	
+	<select id="selectAllAccounts" resultMap="accountMap" parameterType="string">
+		select gca_number, id, gca_password, balance, to_char(reg_date , 'yyyy-mm-dd') as reg_date
+		from gc_account where id = #{id}
+	</select>	
+		
+</mapper>

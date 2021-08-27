@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
@@ -25,7 +26,7 @@ public class MemberController {
 	}
 	@PostMapping("/signin")
 	public String login(MemberVO member, Model model, HttpSession session) {
-		System.out.println("info"  +  member);
+		System.out.println("info : "  +  member);
 		MemberVO userVO = service.signin(member);
 		System.out.println("userVO : "  +  userVO);
 		String msg = "";
@@ -63,25 +64,22 @@ public class MemberController {
 		return "member/signcontract";		
 	}
 	
-	@GetMapping("/signup")
+	@GetMapping("/signup/{userType}")
 	public String signup(Model model) {
 		System.out.println("회원가입 신청");
 		model.addAttribute("memberVO", new MemberVO());		
 		return "member/signup";
 	}	
 	
-	
-	@PostMapping("/signup")
-	public String signup(MemberVO member, Model model, HttpSession session) {
+	@PostMapping("/signup/{userType}")
+	public String signup(MemberVO member, Model model, HttpSession session, @PathVariable("userType") int userType) {
+		member.setUserType(userType);
 		System.out.println("info : " + member);
-		int row = service.signup(member);
 		String msg = "";
 		String view = "";
-		if(row != 1) {
-			view = "member/signin";			
-			msg = "서버 문제로 회원가입에 실패 하셨습니다.";
-			model.addAttribute("msg", msg);			
-		}else {			
+		try {
+			int row = service.signup(member);
+			System.out.println("rowCount : " + row);
 			MemberVO userVO = member;
 			model.addAttribute("userVO", userVO);
 			msg = "환영합니다. " + userVO.getName() + "님";
@@ -93,8 +91,20 @@ public class MemberController {
 			} else {
 				view = "redirect:/";
 			}
+		} catch (Exception e) {
+			view = "member/signup";
+			msg = "서버 문제로 회원가입에 실패 하셨습니다.";
+			model.addAttribute("msg", msg);
+			System.out.println(e);
 		}
+		System.out.println(view);
+		System.out.println(msg);
 		return view;
 	}
+	
+	
+	
+	
+	
 	
 }

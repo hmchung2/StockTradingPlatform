@@ -14,6 +14,8 @@ hello <br>
 </c:if>
 <c:if test="${ not empty userVO }">
 	<a href="${pageContext.request.contextPath}/signout">로그아웃</a><br>	
+	<a href="${pageContext.request.contextPath}/account/contract">계좌개설</a><br>	
+	<a href="${pageContext.request.contextPath}/account/showall">계좌조회</a><br>	
 </c:if>
 
 <a href="${pageContext.request.contextPath}/signcontract">회원가입 하기</a><br>

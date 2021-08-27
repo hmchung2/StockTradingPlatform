@@ -1,5 +1,6 @@
 package gc.co.kr.member.dao;
 
+import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,17 +13,20 @@ public class MemberDAOImpl implements MemberDAO{
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 	
+	@Autowired
+	private SqlSession session;
+	
 	public MemberVO signin(MemberVO member) {
-		System.out.println("sign in ");
+		System.out.println("sign in try");
 		MemberVO userVO = sqlSessionTemplate.selectOne("member.MemberDAO.signin" , member);		
-		System.out.println("signed in");
+		System.out.println("sign in done");
 		return userVO;
 	}
 
 	public int signup(MemberVO member) {
 		// TODO Auto-generated method stub		
-		int row = 	sqlSessionTemplate.insert("member.MemberDAO.signup", member);
-		sqlSessionTemplate.commit();
+		System.out.println("inserting new member");
+		int row = 	session.insert("member.MemberDAO.signup", member);
 		return row;
 	}
 	

@@ -14,7 +14,7 @@ public class MessageInterceptor extends HandlerInterceptorAdapter{
 		HttpSession session = request.getSession();
 		String msg = (String) session.getAttribute("msg");
 		if(msg != null ) {
-			System.out.println(msg);
+			System.out.println("from MessageInterceptor : " +  msg);
 			session.removeAttribute("msg");
 		}
 		return true;
