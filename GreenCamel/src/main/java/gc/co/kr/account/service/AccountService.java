@@ -9,10 +9,12 @@ import gc.co.kr.account.vo.AccountVO;
 @Transactional
 public interface AccountService {
 	
+
 	@Transactional
 	int createAcc(AccountVO account);
 
 	List<AccountVO> selectAllAccounts(String userID);
-	
+
+	AccountVO signinAccount(AccountVO accountVO);
 	
 }

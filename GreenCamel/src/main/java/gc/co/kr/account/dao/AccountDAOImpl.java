@@ -39,5 +39,12 @@ public class AccountDAOImpl implements AccountDAO{
 		List<AccountVO> list = sqlSessionTemplate.selectList("account.AccountDAO.selectAllAccounts" ,   userID);
 		return list;
 	}
+
+	@Override
+	public AccountVO signinAccount(AccountVO accountVO) {
+		// TODO Auto-generated method stub
+		AccountVO userAccountVO = sqlSessionTemplate.selectOne("account.AccountDAO.signinAccount" , accountVO);		
+		return userAccountVO ;
+	}
 	
 }

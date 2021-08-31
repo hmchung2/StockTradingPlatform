@@ -23,8 +23,15 @@
 	
 	
 	<select id="selectAllAccounts" resultMap="accountMap" parameterType="string">
-		select gca_number, id, gca_password, balance, to_char(reg_date , 'yyyy-mm-dd') as reg_date
+		select gca_number, id, nick, gca_password, balance, to_char(reg_date , 'yyyy-mm-dd') as reg_date
 		from gc_account where id = #{id}
-	</select>	
+	</select>
+	
+	<select id="signinAccount" resultMap="accountMap" parameterType="accountVO">
+		select gca_number, nick, id, gca_password, balance, to_char(reg_date , 'yyyy-mm-dd') as reg_date
+		from gc_account
+		where id = #{id , jdbcType=VARCHAR} and gca_number = #{gcaNumber, jdbcType=VARCHAR} and gca_password = #{gcaPassword, jdbcType=VARCHAR}		
+	</select>
+	
 		
 </mapper>

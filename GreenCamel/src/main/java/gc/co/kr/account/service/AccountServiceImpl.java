@@ -60,5 +60,12 @@ public class AccountServiceImpl implements AccountService{
 		return list;
 	}
 
+	@Override
+	public AccountVO signinAccount(AccountVO accountVO) {
+		// TODO Auto-generated method stub
+		AccountVO userAccountVO = accountDAO.signinAccount(accountVO);
+		return userAccountVO;
+	}
+
 
 }

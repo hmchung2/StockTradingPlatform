@@ -32,7 +32,8 @@ public class SigninInterceptor extends HandlerInterceptorAdapter{
 			
 			response.sendRedirect(request.getContextPath() +  "/signin");
 			return false;
-		}				
+		}
+		System.out.println("로그인 확인됨.");
 		return true;		
 	}
 	

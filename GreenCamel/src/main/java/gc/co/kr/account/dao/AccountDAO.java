@@ -11,5 +11,8 @@ public interface AccountDAO {
 	AccountVO selectByAccNum(String gcaNumber);
 
 	List<AccountVO> selectAllAccounts(String userID);
+
+	AccountVO signinAccount(AccountVO accountVO);
+	
 	
 }

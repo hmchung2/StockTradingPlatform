@@ -52,6 +52,7 @@
 	<bean class="gc.co.kr.interceptor.SigninInterceptor" id="signinInterceptor" />
 	<bean class="gc.co.kr.interceptor.SignoutInterceptor" id="signoutInterceptor" />
 	<bean class="gc.co.kr.interceptor.MessageInterceptor" id="messageInterceptor" />
+
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**"/>
