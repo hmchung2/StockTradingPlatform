@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="realtimestock.RealTimeStockDAO">		
+	<resultMap type="realTimeStockVO" id="realTimeStockMap">
+		<result column="market_price" property="marketPrice" ></result>
+		<result column="share_outstanding" property="shareOutstanding" ></result>
+		<result column="avg_daily_volume10day" property="avgDailyVolume10day" ></result>
+		<result column="avg_daily_volume3month" property="avgDailyVolume3month" ></result>
+		<result column="dividends_per_share" property="dividendsPerShare" ></result>
+		<result column="bid_size" property="bidSize" ></result>
+		<result column="ask_size" property="askSize" ></result>
+		<result column="floating_shares" property="floatingShares" ></result>
+		<result column="short_ratio" property="shortRatio" ></result>
+		<result column="eps_forward" property="epsForward" ></result>
+		<result column="book_value" property="bookValue" ></result>
+		<result column="shares_short" property="sharesShort" ></result>
+		<result column="diviidends_yield" property="dividendsYield" ></result>
+		<result column="market_change" property="marketChange" ></result>
+		<result column="market_change_percent" property="marketChangePercent" ></result>
+		<result column="market_day_high" property="marketDayHigh" ></result>
+		<result column="market_day_low" property="marketDayLow" ></result>
+		<result column="market_volume" property="marketVolume" ></result>
+	</resultMap>
+
+	<select id="selectByTimeRange" resultMap="realTimeStockMap" parameterType="hashMap">
+		select time , symbol , market_price , bid , ask , bid_size, ask_size , market_volume
+		from gc_realtime_stock where time between to_date(#{start}, 'yyyy-MM-DD-HH24:MI:SS')  
+		and to_date(#{end}, 'yyyy-MM-DD-HH24:MI:SS')
+	</select>
+</mapper>

@@ -1,7 +1,9 @@
 package gc.co.kr;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -15,6 +17,8 @@ import gc.co.kr.account.dao.AccountDAO;
 import gc.co.kr.account.vo.AccountVO;
 import gc.co.kr.member.service.MemberService;
 import gc.co.kr.member.vo.MemberVO;
+import gc.co.kr.realtimestock.dao.RealTimeStockDAO;
+import gc.co.kr.realtimestock.vo.RealTimeStockVO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/config/spring/spring-mvc.xml"})
@@ -26,6 +30,9 @@ public class LoginTest {
 		
 	@Autowired
 	private AccountDAO accountDAO;
+	
+	@Autowired
+	private RealTimeStockDAO realtimestockDAO;
 	
 	@Ignore
 	@Test
@@ -60,6 +67,7 @@ public class LoginTest {
 		System.out.println(row);
 	}
 	
+	@Ignore
 	@Test
 	public void testSelectAllAccounts() throws Exception{
 		List<AccountVO> list = accountDAO.selectAllAccounts("hmchung1005");
@@ -68,6 +76,16 @@ public class LoginTest {
 		}
 	}
 	
+	@Test
+	public void testrealtimestockDAO() throws Exception{
+		Map<String , String> testing = new HashMap<String,String>();
+		testing.put("start", "2021-08-31-17:37:20");
+		testing.put("end", "2021-08-31-17:40:50");
+		List<RealTimeStockVO> list = realtimestockDAO.selectStockByTime(testing);
+		for(RealTimeStockVO r : list) {
+			System.out.println(r);
+		}
+	}
 	
 	
 }

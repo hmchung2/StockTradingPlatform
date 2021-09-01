@@ -4,6 +4,7 @@
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:websocket="http://www.springframework.org/schema/websocket"
     xsi:schemaLocation="http://www.springframework.org/schema/beans   
     http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/context   
@@ -11,7 +12,9 @@
     http://www.springframework.org/schema/mvc
     http://www.springframework.org/schema/mvc/spring-mvc.xsd
     http://www.springframework.org/schema/tx
-    http://www.springframework.org/schema/tx/spring-tx.xsd">
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/websocket
+	http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd">
 
 	<context:component-scan base-package="gc.co.kr" />
 	<tx:annotation-driven/>
@@ -47,7 +50,11 @@
 	</bean>	
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
 	
-
+<!-- 	<websocket:handlers>
+		<websocket:mapping handler="chattingHandler" path="/GreenCamel/chatting"/>
+		<websocket:sockjs></websocket:sockjs>
+	</websocket:handlers>
+	<bean id="chattingHandler" class="gc.co.kr.practice.handler.ChattingHandler"/> -->
 	
 	<bean class="gc.co.kr.interceptor.SigninInterceptor" id="signinInterceptor" />
 	<bean class="gc.co.kr.interceptor.SignoutInterceptor" id="signoutInterceptor" />

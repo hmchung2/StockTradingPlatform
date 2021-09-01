@@ -6,5 +6,6 @@
  	<typeAliases>
 		<typeAlias type="gc.co.kr.member.vo.MemberVO" alias="memberVO"/>
 		<typeAlias type="gc.co.kr.account.vo.AccountVO" alias="accountVO"/>
+		<typeAlias type="gc.co.kr.realtimestock.vo.RealTimeStockVO" alias="realTimeStockVO"/>
 	</typeAliases>
 </configuration>
