@@ -24,8 +24,11 @@ public class ChattingHandler extends TextWebSocketHandler{
 	@Override
 	protected void handleTextMessage(WebSocketSession session , TextMessage message) throws Exception{
 		System.out.println("#ChattingHandler, handleMessaage");
+		System.out.println("ws session : " +  session);
+		System.out.println("text msg : " + message);
 		for(WebSocketSession s : sessionList) {
-			s.sendMessage(new TextMessage(session.getPrincipal().getName() + ":" + message.getPayload()  ));
+			System.out.println(s);
+			s.sendMessage(new TextMessage("testing" + ":" + message.getPayload()  ));
 		}
 	}
 	

@@ -9,4 +9,10 @@ public class HomeController {
 	public String home() {
 		return "index";
 	}
+	
+	@RequestMapping("/chatting")
+	public String chatting() {
+		return "chat/view_chat";
+	}
+	
 }

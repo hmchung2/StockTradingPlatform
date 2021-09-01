@@ -50,11 +50,11 @@
 	</bean>	
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
 	
-<!-- 	<websocket:handlers>
-		<websocket:mapping handler="chattingHandler" path="/GreenCamel/chatting"/>
+	<websocket:handlers>
+		<websocket:mapping handler="chattingHandler" path="/chatting"/>
 		<websocket:sockjs></websocket:sockjs>
 	</websocket:handlers>
-	<bean id="chattingHandler" class="gc.co.kr.practice.handler.ChattingHandler"/> -->
+	<bean id="chattingHandler" class="gc.co.kr.practice.handler.ChattingHandler"/>
 	
 	<bean class="gc.co.kr.interceptor.SigninInterceptor" id="signinInterceptor" />
 	<bean class="gc.co.kr.interceptor.SignoutInterceptor" id="signoutInterceptor" />
