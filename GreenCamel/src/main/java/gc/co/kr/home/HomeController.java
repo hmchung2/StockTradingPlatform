@@ -14,5 +14,15 @@ public class HomeController {
 	public String chatting() {
 		return "chat/view_chat";
 	}
+
+	@RequestMapping("/home-template")
+	public String homeTemplate() {
+		return "home-template";
+	}
+	
+	@RequestMapping("/dash-template")
+	public String dashTemplate() {
+		return "dash-template";
+	}
 	
 }
