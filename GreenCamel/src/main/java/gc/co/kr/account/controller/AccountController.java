@@ -20,6 +20,7 @@ import gc.co.kr.account.service.AccountService;
 import gc.co.kr.account.vo.AccountVO;
 import gc.co.kr.member.vo.MemberVO;
 
+@SessionAttributes({ "accountVO" }) 
 @Controller
 @RequestMapping("/account")
 public class AccountController { 
@@ -76,26 +77,19 @@ public class AccountController {
 	}
 	
 	
-	@RequestMapping("/viewaccounts/{func}")
-	public String showAllAccounts(Model model, HttpSession session, @PathVariable("func") String func) {
+	@GetMapping("/signin")
+	public String showAllAccounts(Model model, HttpSession session) {
 		System.out.println("전체 계좌 조회");
 		MemberVO userVO  =  (MemberVO)session.getAttribute("userVO");
 		String userID = userVO.getId();
 		List<AccountVO> list =  service.selectAllAccounts(userID);
 		model.addAttribute("list", list);
 		Map<String, String> map = new HashMap<>(); 
-		if(func != null && func.endsWith("logs")){
-			map.put("destination" , "logs");
-			map.put("directMsg" , "상세정보" );			
-		}else if(func != null && func.endsWith("htc")) {
-			map.put("destination", "htc");
-			map.put("directMsg", "홈 트레이딩 센터");
-		}
 		model.addAttribute("map" , map);
 		return "gcaccount/viewaccounts";
 	}	
 	
-	@RequestMapping("/htc")
+	@PostMapping("/signin")
 	public String accountDetail(AccountVO accountVO, Model model, HttpSession session) {
 		System.out.println("계좌 상세");
 		//ModelAndView mav = new ModelAndView();		
@@ -107,19 +101,31 @@ public class AccountController {
 		System.out.println("userAccountVO : "  + accountVO);
 		if(accountVO == null) {
 			String  msg ="패스워드 정보가 잘못 입력 되었습니다.";
-			view = showAllAccounts(model, session , "htc");
+			view = showAllAccounts(model, session);
 			model.addAttribute("msg" , msg);			
 			System.out.println(msg);
 		}else {
-			view =  "gcaccount/htc";
+			model.addAttribute("accountVO", accountVO);
 			System.out.println("setting user account");
+			String dest = (String) session.getAttribute("dest2");
+			if (dest != null) {
+				session.removeAttribute("dest");
+				view = "redirect:" + dest;
+			} else {
+				view = "redirect:/";
+			}			
 		}
 		System.out.println("post viewaccounts view : "  + view);
 		return view;		
 	}
 	
+	@GetMapping("/htc")
+	public String getHTC() {
+		return "gcaccount/htc";
+	}
 	
 	
+	//view =  "gcaccount/htc";
 //	@GetMapping("/htc")
 //	public String htsHome(HttpSession session) {
 //		AccountVO userAccountVO = (AccountVO)session.getAttribute("userAccountVO");

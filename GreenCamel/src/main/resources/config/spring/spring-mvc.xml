@@ -59,7 +59,7 @@
 	<bean class="gc.co.kr.interceptor.SigninInterceptor" id="signinInterceptor" />
 	<bean class="gc.co.kr.interceptor.SignoutInterceptor" id="signoutInterceptor" />
 	<bean class="gc.co.kr.interceptor.MessageInterceptor" id="messageInterceptor" />
-
+	<bean class="gc.co.kr.interceptor.AccountInterceptor" id="accountInterceptor" />
 	 <mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**"/>
@@ -77,6 +77,15 @@
 			<mvc:mapping path="/**"/>
 			<ref bean="messageInterceptor"/>
 		</mvc:interceptor>
+		
+		<mvc:interceptor>
+			<mvc:mapping path="/account/**"/>
+			<mvc:exclude-mapping path="/account/create"/>
+			<mvc:exclude-mapping path="/account/contract"/>
+			<mvc:exclude-mapping path="/account/signin"/>
+			<ref bean="accountInterceptor"/>
+		</mvc:interceptor>
+		
 		
 		<mvc:interceptor>
 			<mvc:mapping path="/signin"/>

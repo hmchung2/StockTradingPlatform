@@ -9,7 +9,7 @@
 
 	<div class="d-flex align-items-center logo-box justify-content-start">
 		<!-- Logo -->
-		<a href="index.html" class="logo"> <!-- logo-->
+		<a href="${ pageContext.request.contextPath }/" class="logo"> <!-- logo-->
 			<div class="logo-mini w-30">
 				<span class="light-logo"><img src="${ pageContext.request.contextPath }/resources/images/logo-letter.png" alt="logo"></span> <span class="dark-logo"><img src="${ pageContext.request.contextPath }/resources/images/logo-letter.png" alt="logo"></span>
 			</div>

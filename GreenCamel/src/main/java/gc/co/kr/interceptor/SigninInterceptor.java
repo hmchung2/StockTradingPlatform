@@ -18,6 +18,7 @@ public class SigninInterceptor extends HandlerInterceptorAdapter{
 
 		MemberVO userVO = (MemberVO) session.getAttribute("userVO");
 		if(userVO == null) {
+		
 			String uri = request.getRequestURI();
 			uri = uri.substring(request.getContextPath().length());
 			System.out.println(uri);
@@ -28,8 +29,7 @@ public class SigninInterceptor extends HandlerInterceptorAdapter{
 			// uri : /board/detail request.getRequestURI();
 			// query : no=3        request.getQueryString();
 			// if(query != null) uri = uri + "?"  query
-			
-			
+
 			response.sendRedirect(request.getContextPath() +  "/signin");
 			return false;
 		}

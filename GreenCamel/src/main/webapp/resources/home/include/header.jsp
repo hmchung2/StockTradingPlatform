@@ -11,37 +11,39 @@
 
 <nav hidden class="nav-white nav-transparent dark-overlay">
 	<div class="nav-header">
-		<a href="index.html" class="brand"> <img src="${ pageContext.request.contextPath }/resources/images/logo-light-text2.png" alt="" />
+		<a href="${ pageContext.request.contextPath }/" class="brand"> <img src="${ pageContext.request.contextPath }/resources/images/logo-light-text2.png" alt="" />
 		</a>
 		<button class="toggle-bar">
 			<span class="ti-menu"></span>
 		</button>
 	</div>
 	<ul class="menu">
-		<li class="dropdown"><a href="#">계좌</a>
+	<%-- 	<li class="dropdown"><a href="#">계좌</a>
 			<ul class="dropdown-menu">
 				<li><a href="${pageContext.request.contextPath}/signin">로그인</a></li>
 				<li><a href="${pageContext.request.contextPath}/signout">로그아웃</a></li>
 				<li><a href="${pageContext.request.contextPath}/signcontract">회원가입</a></li>
 				<li><a href="index4.html">설정 변경</a></li>
-			</ul></li>
-		<li><a href="buy_sell.html">Instant Buy & Sell</a></li>
-		<li><a href="${pageContext.request.contextPath}/account/contract">계좌 개설</a></li>
-		<li class="dropdown"><a href="#">Trade</a>
+			</ul></li> --%>
+<%-- 		<li><a href="buy_sell.html">Instant Buy & Sell</a></li>
+		<li><a href="${pageContext.request.contextPath}/account/contract">모의 투자</a></li> --%>
+		<li class="dropdown"><a href="#">사용자 페이지</a>
 			<ul class="dropdown-menu">
-				<li><a href="currency_converter.html">Currency Converter</a></li>
-				<li><a href="live_coin.html">Live Coin Chart</a></li>
+				<li><a href="${pageContext.request.contextPath}/signin">로그인</a></li>
+				<li><a href="${pageContext.request.contextPath}/signout">로그아웃</a></li>
+				<li><a href="${pageContext.request.contextPath}/signcontract">회원가입</a></li>
+				<li><a href="${pageContext.request.contextPath}/modifyinfo">회원정보 수정</a></li>
 			</ul></li>
-		<li class="megamenu"><a href="#">Pages</a>
+		<li class="megamenu"><a href="#">페이지</a>
 			<div class="megamenu-content">
 				<div class="row">
 					<div class="col-lg-3 col-12">
 						<ul class="list-group">
 							<li><h4 class="menu-title">User Pages</h4></li>
-							<li><a href="faqs.html"><i class="ti-arrow-circle-right me-10"></i>FAQs</a></li>
-							<li><a href="inovice.html"><i class="ti-arrow-circle-right me-10"></i>Invoice</a></li>
-							<li><a href="membership.html"><i class="ti-arrow-circle-right me-10"></i>Membership</a></li>
-							<li><a href="testimonial.html"><i class="ti-arrow-circle-right me-10"></i>Testimonial</a></li>
+							<li><a href="${pageContext.request.contextPath}/signin"><i class="ti-arrow-circle-right me-10"></i>로그인</a></li>
+							<li><a href="${pageContext.request.contextPath}/signout"><i class="ti-arrow-circle-right me-10"></i>로그아웃</a></li>
+							<li><a href="${pageContext.request.contextPath}/signcontract"><i class="ti-arrow-circle-right me-10"></i>회원가입</a></li>
+							<li><a href="testimonial.html"><i class="ti-arrow-circle-right me-10"></i>회원 정보 수정</a></li>
 							<li><a href="about.html"><i class="ti-arrow-circle-right me-10"></i>About</a></li>
 							<li><a href="404.html"><i class="ti-arrow-circle-right me-10"></i>404</a></li>
 							<li><a href="500.html"><i class="ti-arrow-circle-right me-10"></i>500</a></li>
@@ -49,10 +51,10 @@
 					</div>
 					<div class="col-lg-3 col-12">
 						<ul class="list-group">
-							<li><h4 class="menu-title">Widgets</h4></li>
-							<li><a href="widgets.html"><i class="ti-arrow-circle-right me-10"></i>Widgets</a></li>
-							<li><a href="register.html"><i class="ti-arrow-circle-right me-10"></i>Register</a></li>
-							<li><a href="login.html"><i class="ti-arrow-circle-right me-10"></i>Login</a></li>
+							<li><h4 class="menu-title">계좌</h4></li>
+							<li><a href="${pageContext.request.contextPath}/account/contract"><i class="ti-arrow-circle-right me-10"></i>계좌 생성</a></li>
+							<li><a href="${pageContext.request.contextPath}/account/htc"><i class="ti-arrow-circle-right me-10"></i>웹트레이딩</a></li>
+							<li><a href="${pageContext.request.contextPath}/account/log"><i class="ti-arrow-circle-right me-10"></i>계좌 조회</a></li>
 							<li><a href="register_login.html"><i class="ti-arrow-circle-right me-10"></i>Register & Login</a></li>
 							<li><a href="forgot_pass.html"><i class="ti-arrow-circle-right me-10"></i>Forgot Password</a></li>
 							<li><a href="lockscreen.html"><i class="ti-arrow-circle-right me-10"></i>Lock Screen</a></li>

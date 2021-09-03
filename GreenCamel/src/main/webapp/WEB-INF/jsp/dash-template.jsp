@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>   
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,44 +18,44 @@
 	<!-- Style-->  
 	<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/style.css">
 	<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/skin_color.css">	
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/resources/js/jquery-3.6.0.min.js"></script>
+	<script>
+	$(document).ready(function() {	
+
+		// 자바스크립트 여기
+	
+	})
+	</script>	
+	
 </head>
 <body class="hold-transition dark-skin sidebar-mini theme-warning fixed">
-
-
 	<div class="wrapper">
 		<div id="loader"></div>
 		<header class="main-header">
 			<jsp:include page="/resources/dash/include/header.jsp" />
 		</header>	
 	</div>
-
 	<aside class="main-sidebar">
 		<jsp:include page="/resources/dash/include/sidebar.jsp" />
 	</aside>
-
-
-
 	<!-- Content Wrapper. Contains page content -->
 	<div class="content-wrapper">
 		<div class="container-full">
 			<!-- Main content -->
 			<section class="content">
-				<div class="row"></div>
+				<div class="row">
+				
+				컨텐츠
+				
+				
+				</div>
 			</section>
 		</div>
 	</div>
-
-
-
-
-
 	<footer class="main-footer">
-		ok
 		<jsp:include page="/resources/dash/include/footer.jsp" />
 		 &copy; 2021 <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
 	</footer>	
-	 
-	 
 	 <aside class="control-sidebar">
 	  	<jsp:include page="/resources/dash/include/control-sidebar.jsp" />  
 	 </aside>

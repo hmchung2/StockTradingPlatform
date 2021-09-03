@@ -25,4 +25,9 @@ public class HomeController {
 		return "dash-template";
 	}
 	
+	@RequestMapping("/testing")
+	public String testing() {
+		return "testing";
+	}
+	
 }
