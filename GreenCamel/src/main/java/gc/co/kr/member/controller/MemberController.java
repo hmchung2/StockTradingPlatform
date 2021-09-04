@@ -95,9 +95,9 @@ public class MemberController {
 		} catch (Exception e) {
 			view = "member/signup";
 			msg = "서버 문제로 회원가입에 실패 하셨습니다.";
-			model.addAttribute("msg", msg);
 			System.out.println(e);
 		}
+		model.addAttribute("msg", msg);
 		System.out.println(view);
 		System.out.println(msg);
 		return view;

@@ -22,9 +22,11 @@
 <script>
 
 	window.onload = function(){
-
-		if('${msg}' !=  "")
-			alert('${msg}') // will erase
+		
+		 let fullMsg = '${msg}'
+		 if(fullMsg != null && fullMsg  !=  ""){
+				myAlarm(fullMsg)
+		 }
 	} 
 
 	
@@ -81,7 +83,7 @@
 			</form>
 		</div>
 		<hr> --%>	
-<body class="hold-transition theme-primary bg-img" style="background-image: url(${pageContext.request.contextPath}/resources/images/auth-bg/bg-11.jpg)">
+<body class="hold-transition dark-skin theme-primary bg-img" style="background-image: url(${pageContext.request.contextPath}/resources/images/auth-bg/bg-11.jpg)">
 	
 	<div class="container h-p100">
 		<div class="row align-items-center justify-content-md-center h-p100">	
@@ -151,6 +153,9 @@
 	<!-- Vendor JS -->
 	<script src="${ pageContext.request.contextPath }/resources/dash/js/vendors.min.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/chat-popup.js"></script>
-    <script src="${ pageContext.request.contextPath }/resources/assets/icons/feather-icons/feather.min.js"></script>	
+    <script src="${ pageContext.request.contextPath }/resources/assets/icons/feather-icons/feather.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/sweetalert/sweetalert.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/resources/js/sweet-alert.js"></script>
+        	
 </body>
 </html>

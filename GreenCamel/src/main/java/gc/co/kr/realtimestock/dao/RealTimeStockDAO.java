@@ -8,5 +8,7 @@ import gc.co.kr.realtimestock.vo.RealTimeStockVO;
 public interface RealTimeStockDAO {
 	
 	List<RealTimeStockVO> selectStockByTime(Map<String, String> dates);
+	
+	List<RealTimeStockVO> selectStockByTimeSymbols(Map<String,String>dates ,List<String> symbols );
 
 }

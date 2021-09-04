@@ -28,6 +28,24 @@
 		<property name="fileEncoding" value="UTF-8"/>
 	</bean>
 	
+	<bean id="mailSender" 
+			class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.gmail.com" /> <!-- gmail을 사용 -->
+        <property name="port" value="587" />
+        <property name="username" value="hmchung2@gmail.com" />
+		<property name="password" value="Incep&amp;8133" />
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.debug">true</prop>
+            </props>
+        </property>
+    </bean>
+	
+	
+	
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> 
 		<property name="driverClassName" value="${driver}"/>		
 		<property name="url" value="${url}"/>
@@ -55,7 +73,7 @@
 		<websocket:sockjs></websocket:sockjs>
 	</websocket:handlers>
 	<bean id="chattingHandler" class="gc.co.kr.practice.handler.ChattingHandler"/>
-	
+	  
 	<bean class="gc.co.kr.interceptor.SigninInterceptor" id="signinInterceptor" />
 	<bean class="gc.co.kr.interceptor.SignoutInterceptor" id="signoutInterceptor" />
 	<bean class="gc.co.kr.interceptor.MessageInterceptor" id="messageInterceptor" />

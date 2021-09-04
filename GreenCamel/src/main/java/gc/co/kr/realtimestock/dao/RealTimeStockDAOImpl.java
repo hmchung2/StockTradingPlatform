@@ -12,6 +12,7 @@ import gc.co.kr.realtimestock.vo.RealTimeStockVO;
 
 @Repository
 public class RealTimeStockDAOImpl implements RealTimeStockDAO{
+
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 	
@@ -23,4 +24,14 @@ public class RealTimeStockDAOImpl implements RealTimeStockDAO{
 		List<RealTimeStockVO> stockList = sqlSessionTemplate.selectList("realtimestock.RealTimeStockDAO.selectByTimeRange" ,dates);
 		return stockList;
 	}
+	
+	@Override
+	public List<RealTimeStockVO> selectStockByTimeSymbols(Map<String , String> dates , List<String> symbols){
+		String symbolStr = String.join(",", symbols);
+		System.out.println(symbolStr);
+		dates.put("symbols", symbolStr);		
+		List<RealTimeStockVO> stockList = sqlSessionTemplate.selectList("realtimestock.RealTimeStockDAO.selectByTimeRangeSymbols" , dates );		
+		return stockList;
+	}
+
 }
