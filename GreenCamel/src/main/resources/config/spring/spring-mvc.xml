@@ -32,8 +32,8 @@
 			class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="smtp.gmail.com" /> <!-- gmail을 사용 -->
         <property name="port" value="587" />
-        <property name="username" value="hmchung2@gmail.com" />
-		<property name="password" value="Incep&amp;8133" />
+        <property name="username" value="이메일 주소" />
+		<property name="password" value="비밀번호" />
         <property name="javaMailProperties">
             <props>
                 <prop key="mail.transport.protocol">smtp</prop>
