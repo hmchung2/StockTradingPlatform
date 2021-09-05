@@ -24,7 +24,7 @@
 
 	let idChk = "false"
 	let emailChk = "false"
-	let randomDigits;
+	let randomDigits = null;
 	$(document).ready(function() {
 		let fullMsg = '${msg}'
 
@@ -36,11 +36,13 @@
 			emailChk = "false"
 			$("#emailCkMessage").html("이메일 인증이 필요 합니다.")
 			$("#emailCkMessage").css("color" , "red")
+			randomDigit = null;			
 		})
 		$("#str_email01").change(function() {
 			emailChk = "false"
 			$("#emailCkMessage").html("이메일 인증이 필요 합니다.")
 			$("#emailCkMessage").css("color" , "red")
+			randomDigit = null;
 		})
 		
 		
@@ -69,6 +71,7 @@
 				success : function(data) {
 					console.log(data)
 					console.log("발송 성공")
+					emailChk = "true"
 				},
 				error : function() {
 					console.log("발송 실패")					
@@ -82,9 +85,11 @@
 			if ($('#id_id').val().length < 5) {
 				outmsg = "5글자 이상 필요합니다."
 				$("#idCkMessage").html(outmsg)
+				$("#idCkMessage").css("color" , "red")
 			} else if ($('#id_id').val().length > 30) {
 				outmsg = "30글자 초과 할 수 없습니다."
 				$("#idCkMessage").html(outmsg)
+				$("#idCkMessage").css("color" , "red")
 			} else {
 				let id = $("#id_id").val()
 				console.log("checking id  -> " + id);
@@ -104,9 +109,12 @@
 						outmsg = "이미 사용중인 아이디 입니다."
 					}
 					$("#idCkMessage").html(outmsg)
+					$("#idCkMessage").css("color" , "green")
 				},
 				error : function() {
 					outmsg = "아이디 중복확인중 문제가 발생 했습니다."
+					$("#idCkMessage").html(outmsg)
+					$("#idCkMessage").css("color" , "red")
 				}
 				});
 			}
@@ -126,12 +134,7 @@
 		})
 	});
 
-	$("#myModal").click(function() {
-		$(".modal").fadeIn();
-	});
-	$(".exiting").click(function() {
-		$(".modal").fadeOut();
-	})
+
 	function emailChkSubmit(){
 		if($('#emailChk-pwd').val() == randomDigits){
 			console.log("인증성공")
@@ -182,7 +185,7 @@
 			console.log("full Email : " + fullEmail)
 			$("#hiddenEmail").val(fullEmail)
 
-			let fullPhone = $("#phoneCompany").val() + $("#phoneDigits").val()
+			let fullPhone = $("#phoneDigits").val()
 			console.log("full Phone : " + fullPhone)
 			$("#hiddenPhone").val(fullPhone)
 		} else {
@@ -287,6 +290,13 @@
 										</div>
 										<div class="form-group">
 											<div class="input-group mb-3">
+												<span class="input-group-text bg-transparent"><i class="ti-user"></i></span>
+												<form:input path="name" class="form-control ps-15 bg-transparent" placeholder="이름" type="text" id="name_name" />
+												<form:errors path="name" class="error" />
+											</div>
+										</div>
+										<div class="form-group">
+											<div class="input-group mb-3">
 												<span class="input-group-text bg-transparent"><i class="ti-email"></i></span> 
 												<input class="form-control ps-15 bg-transparent" type="text" id="str_email01" name="str_email01" placeholder="이메일"> &nbsp;<strong>@</strong>&nbsp; 
 												<input class="form-control ps-15 bg-transparent" type="text" name="str_email02" id="str_email02" style="width: 9%; font: bold;" disabled value="naver.com"> <span>&nbsp;</span>
@@ -304,6 +314,8 @@
 												</div>
 												<button type="button" class="tst1 btn btn-info">번호 발급</button>
 												<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-center">인증</button>
+												<form:input id="hiddenEmail" path="email" hidden="true" />
+												<form:errors path="email" class="error" />
 											</div>
 										</div>
 										<div class="form-group">
@@ -313,8 +325,7 @@
 										</div>
 										<div class="form-group">
 											<div class="input-group mb-3">
-												<span class="input-group-text bg-transparent"><i class="fa fa-phone"></i></span> <input class="form-control ps-15 bg-transparent" id="phoneDigits" name="phoneDigits" pattern="\d{3,4}-\d{4}" placeholder="핸드폰 번호 : xxxx-xxxx 형식으로 입력하세요" type="tel">
-												</td>
+												<span class="input-group-text bg-transparent"><i class="fa fa-phone"></i></span> <input class="form-control ps-15 bg-transparent" id="phoneDigits" name="phoneDigits" pattern="\d{3}-\d{3,4}-\d{4}" placeholder="핸드폰 번호 : xxx-xxxx-xxxx 형식으로 입력하세요" type="tel">												
 												<form:input id="hiddenPhone" path="phone" hidden="true" />
 												<form:errors path="phone" class="error" />
 											</div>

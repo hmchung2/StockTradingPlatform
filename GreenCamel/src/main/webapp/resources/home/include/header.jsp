@@ -3,6 +3,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<style>
+#headLogo{
+-moz-transform:scale(0.75);
+-webkit-transform:scale(0.75);
+transform:scale(0.75);
+}
+
+</style> 
 
 <script src="${ pageContext.request.contextPath }/resources/js/jquery-3.6.0.min.js"></script>
 <script>
@@ -10,9 +18,7 @@
 </script>
 
 <nav hidden class="nav-white nav-transparent dark-overlay">
-	<div class="nav-header">
-		<a href="${ pageContext.request.contextPath }/" class="brand"> <img src="${ pageContext.request.contextPath }/resources/images/logo-light-text2.png" alt="" />
-		</a>
+	<div class="nav-header" style="max-height:63px;"> <a href="${ pageContext.request.contextPath }/" style="margin-top:0px; padding-top:0px; padding-bottom:20px;" class="brand"> <img id="headLogo" src="${ pageContext.request.contextPath }/resources/images/gc_transparent2.png" alt="" /></a>						
 		<button class="toggle-bar">
 			<span class="ti-menu"></span>
 		</button>
@@ -53,7 +59,7 @@
 						<ul class="list-group">
 							<li><h4 class="menu-title">계좌</h4></li>
 							<li><a href="${pageContext.request.contextPath}/account/contract"><i class="ti-arrow-circle-right me-10"></i>계좌 생성</a></li>
-							<li><a href="${pageContext.request.contextPath}/account/htc"><i class="ti-arrow-circle-right me-10"></i>웹트레이딩</a></li>
+							<li><a href="${pageContext.request.contextPath}/account/hts"><i class="ti-arrow-circle-right me-10"></i>웹트레이딩</a></li>
 							<li><a href="${pageContext.request.contextPath}/account/log"><i class="ti-arrow-circle-right me-10"></i>계좌 조회</a></li>
 							<li><a href="register_login.html"><i class="ti-arrow-circle-right me-10"></i>Register & Login</a></li>
 							<li><a href="forgot_pass.html"><i class="ti-arrow-circle-right me-10"></i>Forgot Password</a></li>
@@ -118,7 +124,7 @@
 			<li class="d-md-block d-none"><a href="${pageContext.request.contextPath}/signcontract" class="px-10 pt-15 pb-10"><div class="btn btn-primary py-5">회원가입</div></a></li>	
 	</c:if>
 	<c:if test="${not empty userVO }">
-			<li class="d-md-block d-none"><a href="${pageContext.request.contextPath}/account/htc" class="px-10 pt-15 pb-10"><div class="btn btn-primary py-5">웹 트레이딩 시작</div></a></li>	
+			<li class="d-md-block d-none"><a href="${pageContext.request.contextPath}/account/hts" class="px-10 pt-15 pb-10"><div class="btn btn-primary py-5">웹 트레이딩 시작</div></a></li>	
 	</c:if>
 		<li><a href="#" class="toggle-search-fullscreen"><span class="ti-search"></span></a></li>
 	</ul>

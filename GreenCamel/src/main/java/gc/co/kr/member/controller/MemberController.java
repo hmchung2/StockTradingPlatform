@@ -25,6 +25,7 @@ public class MemberController {
 	public String loginForm() {
 		return "member/signin";
 	}
+	
 	@PostMapping("/signin")
 	public String login(MemberVO member, Model model, HttpSession session) {
 		System.out.println("info : "  +  member);
@@ -83,7 +84,8 @@ public class MemberController {
 			System.out.println("rowCount : " + row);
 			MemberVO userVO = member;
 			model.addAttribute("userVO", userVO);
-			msg = "환영합니다. " + userVO.getName() + "님";
+			msg = "환영합니다. " + userVO.getName();
+			msg = "success:회원가입 완료:" + msg;
 			session.setAttribute("msg", msg);
 			String dest = (String) session.getAttribute("dest");
 			if (dest != null) {
@@ -94,7 +96,7 @@ public class MemberController {
 			}
 		} catch (Exception e) {
 			view = "member/signup";
-			msg = "서버 문제로 회원가입에 실패 하셨습니다.";
+			msg = "warning:에러 발생:서버 문제로 회원가입에 실패 하셨습니다.";
 			System.out.println(e);
 		}
 		model.addAttribute("msg", msg);

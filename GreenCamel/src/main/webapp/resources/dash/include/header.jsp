@@ -1,22 +1,29 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<style>
+
+#winstockLogo{
+	-moz-transform:scale(0.5);
+	-webkit-transform:scale(0.5);
+	transform:scale(0.5);
+}
+</style>
+
 <script src="${ pageContext.request.contextPath }/resources/js/jquery-3.6.0.min.js"></script>
 <script>
 
 </script>
-
+<%-- 	<div class="nav-header"> <a href="${ pageContext.request.contextPath }/" style="padding:10px;" class="brand"> <img id="headLogo" src="${ pageContext.request.contextPath }/resources/images/gc_transparent2.png" alt="" /></a>						
+ --%>
 
 	<div class="d-flex align-items-center logo-box justify-content-start">
 		<!-- Logo -->
-		<a href="${ pageContext.request.contextPath }/" class="logo"> <!-- logo-->
-			<div class="logo-mini w-30">
-				<span class="light-logo"><img src="${ pageContext.request.contextPath }/resources/images/logo-letter.png" alt="logo"></span> <span class="dark-logo"><img src="${ pageContext.request.contextPath }/resources/images/logo-letter.png" alt="logo"></span>
-			</div>
-			<div class="logo-lg">
-				<span class="light-logo"><img src="${ pageContext.request.contextPath }/resources/images/logo-dark-text.png" alt="logo"></span> <span class="dark-logo"><img src="${ pageContext.request.contextPath }/resources/images/logo-light-text.png" alt="logo"></span>
-			</div>
+		<div class="align-items-center">
+		<a href="${ pageContext.request.contextPath }/" class="logo" class="align-items-center"> <!-- logo-->
+				<span class="light-logo w-150" style="margin-left:10%;"><img src="${ pageContext.request.contextPath }/resources/images/gc_transparent2.png" alt="logo"></span>
 		</a>
+		</div>
 	</div>
 	<!-- Header Navbar -->
 	<nav class="navbar navbar-static-top">

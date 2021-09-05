@@ -119,9 +119,9 @@ public class AccountController {
 		return view;		
 	}
 	
-	@GetMapping("/htc")
+	@GetMapping("/hts")
 	public String getHTC() {
-		return "gcaccount/htc";
+		return "gcaccount/hts";
 	}
 	
 	

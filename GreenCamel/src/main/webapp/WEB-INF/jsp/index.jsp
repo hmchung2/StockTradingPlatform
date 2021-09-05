@@ -20,10 +20,21 @@
 	<!-- Style-->  
 	<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/home/css/style.css">
 	<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/home/css/skin_color.css">
-     
+	<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/vendors_css.css">
+	<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/style.css">
+	<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/skin_color.css">
+	<script type="text/javascript" src="${ pageContext.request.contextPath }/resources/js/jquery-3.6.0.min.js"></script>	
+    <script>
+     $(document).ready(function() {     	
+     	let fullMsg = '${msg}'
+     	if (fullMsg != null && fullMsg != "") {
+     		myAlarm(fullMsg)
+     	}
+     })
+     </script> 
   </head>
 
-<body class="theme-warning bg-dark-body">
+<body class="theme-warning bg-dark-body"> <!-- bg-dark-body -->
 	
 	<header>
 		<jsp:include page="/resources/home/include/header.jsp" />
@@ -31,16 +42,17 @@
 
 
 	<div id="particles-js" class="overflow-hidden z-0"></div>
-	<section class="h-100vh position-relative z-1" data-overlay="5">
+	
+	<section class="h-100vh position-relative z-1" data-overlay="5"> <!-- data-overlay="5" -->
 		<div class="container h-p100">
 			<div class="row h-p100 align-items-center">
 				<div class="col-lg-6 col-12">
 					<div class="mt-80">
-						<h1 class="box-title text-white mb-20 fw-600 fs-60">Future digit mining Crypto currency</h1>
-						<h4 class="text-white-80 fw-300 mb-30">With more than 1,100 cryptocurrencies and a total market cap of approximately $150 billion circulating in the market today,</h4>
+						<h1 class="box-title text-white mb-20 fw-500 fs-50">Real Time 투자</h1>
+						<h4 class="text-white-80 fw-300 mb-30">실시간으로 주가 데이터와 AI 솔루션으로 손쉬운 금융 라이프 제공</h4>
 						<div class="d-flex gap-3 justify-content-start">
 							<c:if test="${ empty userVO }">
-								<a href="#" class="btn btn-primary">Register</a>
+								<a href="#" class="btn btn-primary">시작하기</a>
 								<a href="${pageContext.request.contextPath}/signin" class="btn btn-outline btn-primary text-white">로그인</a>
 							</c:if>
 						</div>
@@ -584,17 +596,20 @@
 	
 	<!-- Vendor JS -->
 	<script src="${ pageContext.request.contextPath }/resources/home/js/vendors.min.js"></script>	
+	
+	
 	<!-- Corenav Master JavaScript -->
     <script src="${ pageContext.request.contextPath }/resources/home/corenav-master/coreNavigation-1.1.3.js"></script>
     <script src="${ pageContext.request.contextPath }/resources/home/js/nav.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/OwlCarousel2/dist/owl.carousel.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/home/js/particles.js"></script>
-	<script src="${ pageContext.request.contextPath }/resources/home/js/app.js"></script>
-	
+	<script src="${ pageContext.request.contextPath }/resources/home/js/app.js"></script>	
 	<!-- CryptoCurrency front end -->
-	<script src="${ pageContext.request.contextPath }/resources/home/js/template.js"></script>
-	
-	
+	<script src="${ pageContext.request.contextPath }/resources/home/js/template.js"></script>	
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/chat-popup.js"></script>
+    <script src="${ pageContext.request.contextPath }/resources/assets/icons/feather-icons/feather.min.js"></script>	
+    <script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/sweetalert/sweetalert.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/resources/js/sweet-alert.js"></script>		 
 </body>
 </html>
