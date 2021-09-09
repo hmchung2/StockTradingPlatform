@@ -16,6 +16,21 @@
 <!-- Style-->
 <link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/home/css/style.css">
 <link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/home/css/skin_color.css">
+<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/vendors_css.css">
+<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/style.css">
+<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/skin_color.css">
+
+
+<script type="text/javascript" src="${ pageContext.request.contextPath }/resources/js/jquery-3.6.0.min.js"></script>	
+    <script>
+     $(document).ready(function() {     	
+     	let fullMsg = '${msg}'
+     	if (fullMsg != null && fullMsg != "") {
+     		myAlarm(fullMsg)
+     	}
+     })
+     </script> 
+
 </head>
 <body class="theme-warning">
 	<header>
@@ -70,6 +85,12 @@
 	<%-- 	<script src="${ pageContext.request.contextPath }/resources/home/js/particles.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/home/js/app.js"></script> --%>
 	<!-- CryptoCurrency front end -->
-	<script src="${ pageContext.request.contextPath }/resources/home/js/template.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/home/js/template.js"></script>	
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/chat-popup.js"></script>
+    <script src="${ pageContext.request.contextPath }/resources/assets/icons/feather-icons/feather.min.js"></script>	
+    <script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/sweetalert/sweetalert.min.js"></script>
+    <script src="${ pageContext.request.contextPath }/resources/js/sweet-alert.js"></script>
+    <script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script>		 
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/notification.js"></script> 	
 </body>
 </html>

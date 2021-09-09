@@ -11,7 +11,7 @@
 			<param-value>
 				classpath:config/spring/spring-mvc.xml
 			</param-value>
-		</init-param>
+		</init-param>		
 		<load-on-startup>1</load-on-startup>
 		<async-supported>true</async-supported>
 	</servlet>

@@ -9,6 +9,7 @@ import gc.co.kr.account.vo.AccountVO;
 @Transactional
 public interface AccountService {
 	
+	AccountVO selectByAccNum(String gcaNumber);
 
 	@Transactional
 	int createAcc(AccountVO account);

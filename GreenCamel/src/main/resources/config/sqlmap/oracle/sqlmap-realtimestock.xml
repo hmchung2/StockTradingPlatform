@@ -22,11 +22,53 @@
 		<result column="market_day_high" property="marketDayHigh" ></result>
 		<result column="market_day_low" property="marketDayLow" ></result>
 		<result column="market_volume" property="marketVolume" ></result>
+		<result column="unix_time" property="unixTime"></result>
 	</resultMap>
+	
+	<resultMap type="HashMap" id="initValues">
+		<id column="max_value" property="max_value"/>
+		<id column="min_value" property="min_value"/>
+		<id column="min_created" property="min_created"/>
+		<id column="max_created" property="max_created"/>
+		<id column="grp_id" property="grp_id"/>
+		<id column="symbol" property="symbol"/>
+		<id column="min_created_value" property="min_created_value"/>
+		<id column="max_created_value" property="max_created_value"/>
+	</resultMap>
+	
+	
+	<select id="getInitValues" resultMap="initValues" parameterType="hashMap">
+	with extracted as (select symbol, market_price,  unix_time from gc_realtime_stock where unix_time &lt; = #{fullTime} and symbol in
+		<foreach collection="symbolList" item="arr" open="(" close=")" separator=",">
+			#{arr}
+		</foreach>
+		 ) 
+		select l.*, j.market_price as max_created_value from extracted j  inner join ( 
+		select k.* ,  p.market_price as min_created_value from extracted p   inner join 
+		(select max(market_price) max_value , min(market_price) min_value , min(unix_time) min_created,  max(unix_time) max_created , grp_id , symbol  from(
+		select symbol, market_price,  unix_time,  #{interval} * trunc( unix_time / #{interval}  ) as grp_id from extracted ) group by grp_id , symbol   order by grp_id ) k
+		on p.unix_time  = k.min_created and p.symbol = k.symbol) l on j.unix_time = l.max_created and j.symbol = l.symbol
+		order by grp_id		
+	</select>
+	
+	
+	
 
 	<select id="selectByTimeRange" resultMap="realTimeStockMap" parameterType="hashMap">
-		select time , symbol , market_price , bid , ask , bid_size, ask_size , market_volume
+		select unix_time, time , symbol , market_price , bid , ask , bid_size, ask_size , market_volume
 		from gc_realtime_stock where time between to_date(#{start}, 'yyyy-MM-DD-HH24:MI:SS')  
 		and to_date(#{end}, 'yyyy-MM-DD-HH24:MI:SS')
 	</select>
+	
+	<select id="selectByTimeRangeSymbols" resultMap="realTimeStockMap" parameterType="hashMap">
+		SELECT unix_time, time , symbol , market_price , bid , ask , bid_size, ask_size , market_volume , floating_shares , market_change_percent  
+		FROM gc_realtime_stock where inorder in (SELECT max(inorder) FROM gc_realtime_stock where  
+		time between to_date(#{start}, 'yyyy-MM-DD-HH24:MI:SS')  
+		and to_date(#{end}, 'yyyy-MM-DD-HH24:MI:SS') and symbol in
+		<foreach collection="symbolList" item="arr" open="(" close=")" separator=",">
+		 #{arr}
+		</foreach>		
+		GROUP BY symbol ) order by inorder desc
+	</select>
+	
 </mapper>

@@ -1,6 +1,7 @@
 package gc.co.kr;
 
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class LoginTest {
 			System.out.println(r);
 		}
 	}
-	
+	@Ignore
 	@Test
 	public void testrealtimestockSERVICE() throws Exception{
 		Map<String , String> testing = new HashMap<String,String>();
@@ -101,5 +102,19 @@ public class LoginTest {
 		for(RealTimeStockVO r : list) {
 			System.out.println(r);
 		}		
+	}
+	
+	@Test
+	public void testGetInitValues() throws Exception{
+		Map<String, Object> params = new HashMap<String,Object>();
+		params.put("fullTime", 1630460051);
+		params.put("interval", 30);
+		List<String> symbolList = Arrays.asList( "AAPL,HD".split(","));
+		params.put("symbolList", symbolList);
+		List<Map<String,Object>> list = realtimestockDAO.getInitValues(params);
+		for(Map<String, Object> m : list) {
+			System.out.println( Float.parseFloat(String.valueOf( m.get("max_value"))) );
+		}				
 	}	
+	
 }

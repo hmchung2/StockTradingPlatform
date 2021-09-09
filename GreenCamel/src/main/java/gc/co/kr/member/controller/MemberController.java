@@ -40,7 +40,7 @@ public class MemberController {
 		} else {
 			
 			model.addAttribute("userVO", userVO);
-			msg = "환영합니다. " + userVO.getName() + "님";
+			msg = "success:로그인 완료:환영합니다. " + userVO.getName() + "님";			
 			session.setAttribute("msg", msg);
 			// 이제 로그인 후에 그냥 가면 안되고 직전 페이지로 가게함.
 			String dest = (String) session.getAttribute("dest");

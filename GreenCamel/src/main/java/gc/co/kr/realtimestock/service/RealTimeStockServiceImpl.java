@@ -17,12 +17,22 @@ public class RealTimeStockServiceImpl implements RealTimeStockService{
 	
 	@Override
 	public List<RealTimeStockVO> selectStockByTime(Map<String, String> dates) {
-
 		// TODO Auto-generated method stub		
 		List<RealTimeStockVO> list = realTimeStockDAO.selectStockByTime(dates);
 		return list;
-		
-		
-		
+	}
+
+	@Override
+	public List<RealTimeStockVO> selectStockByTimeSymbols(Map<String, Object> params) {		
+		List<RealTimeStockVO> list = realTimeStockDAO.selectStockByTimeSymbols(params);
+		return list;
+	}
+
+	@Override
+	public List<Map<String, Object>> getInitValues(Map<String, Object> params) {		
+		List<Map<String,Object>> candleList = realTimeStockDAO.getInitValues(params);		
+		return candleList ;
 	}	
+
+
 }

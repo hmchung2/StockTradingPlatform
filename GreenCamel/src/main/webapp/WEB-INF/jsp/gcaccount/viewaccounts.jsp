@@ -2,25 +2,32 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>   
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="${ pageContext.request.contextPath }/resources/images/favicon.ico">
-    <title>GreenCamel</title>
-	<!-- Vendors Style-->
-	<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/vendors_css.css">
-	  
-	<!-- Style-->  
-	<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/style.css">
-	<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/skin_color.css">	
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/resources/js/jquery-3.6.0.min.js"></script>
-	<script>
-	$(document).ready(function() {			
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="${ pageContext.request.contextPath }/resources/images/favicon.ico">
+<title>GreenCamel</title>
+<!-- Vendors Style-->
+<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/vendors_css.css">
+
+<!-- Style-->
+<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/style.css">
+<link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/skin_color.css">
+<script type="text/javascript" src="${ pageContext.request.contextPath }/resources/js/jquery-3.6.0.min.js"></script>
+<script>
+	$(document).ready(function() {
+		let fullMsg = '${msg}'
+		if (fullMsg != null && fullMsg != "") {			
+			myAlarm(fullMsg)
+		}
+		
+		
 		// 자바스크립트 여기
 		$(".goto-htc").click(function(){
 			index = this.id.split("_")[1] 
@@ -37,17 +44,20 @@
 			$("#form-gcaNumber").val(current_gcaNumber)
 			$("#form-regDate").val(current_regDate)
 			console.log($("#form-regDate").val())
-		})	
-	})
-	</script>	
+		})
+		
 	
+		
+	})
+</script>
+
 </head>
 <body class="hold-transition dark-skin sidebar-mini theme-warning fixed">
 	<div class="wrapper">
 		<div id="loader"></div>
 		<header class="main-header">
 			<jsp:include page="/resources/dash/include/header.jsp" />
-		</header>	
+		</header>
 	</div>
 	<aside class="main-sidebar">
 		<jsp:include page="/resources/dash/include/sidebar.jsp" />
@@ -88,7 +98,8 @@
 
 											<br>
 											<p class="price" style="font-size: xxx-large;">
-												<sup>₩</sup>${accountVO.balance } <span>&nbsp;</span> <input value="${accountVO.balance }" id="balance_${loop.count }" hidden="true">
+												<sup>₩</sup>${accountVO.balance } <span>&nbsp;</span>
+												<input value="${accountVO.balance }" id="balance_${loop.count }" hidden="true">
 											</p>
 											<hr>
 											<p>
@@ -116,7 +127,8 @@
 
 											<br>
 											<p class="price" style="font-size: xxx-large;">
-												<sup>₩</sup>${accountVO.balance } <span>&nbsp;</span> <input value="${accountVO.balance }" id="balance_${loop.count }" hidden="true">
+												<sup>₩</sup>${accountVO.balance } <span>&nbsp;</span>
+												<input value="${accountVO.balance }" id="balance_${loop.count }" hidden="true">
 											</p>
 											<hr>
 											<p>
@@ -145,7 +157,8 @@
 
 											<br>
 											<p class="price" style="font-size: xxx-large;">
-												<sup>₩</sup>${accountVO.balance } <span>&nbsp;</span> <input value="${accountVO.balance }" id="balance_${loop.count }" hidden="true">
+												<sup>₩</sup>${accountVO.balance } <span>&nbsp;</span>
+												<input value="${accountVO.balance }" id="balance_${loop.count }" hidden="true">
 											</p>
 											<hr>
 											<p>
@@ -165,7 +178,6 @@
 						</c:choose>
 					</c:forEach>
 				</div>
-
 				<hr>
 				<div class="content-header">
 					<div class="d-flex align-items-center">
@@ -181,31 +193,95 @@
 								</nav>
 							</div>
 						</div>
-
 					</div>
 				</div>
-<section class="content" style="width:45%;">
-				<div class="row">
-			
-					<div class="box">
-						<div class="box-body text-center">
-							<div class="mb-20 mt-20">
-								<img src="${ pageContext.request.contextPath }/resources/images/avatar/avatar-12.png" width="150" class="rounded-circle bg-info-light" alt="user" />
-								<h4 class="mt-20 mb-0">johen doe</h4>
-								<a href="mailto:dummy@gmail.com">dummy@gmail.com</a>
+				<section class="content">
+					<div class="row">
+						<c:if test="${empty leagueAccountVO }">
+							<div class="col-12 col-lg-5 col-xl-5">
+								<div class="box box-widget widget-user">
+									<div class="widget-user-header bg-img bbsr-0 bber-0" style="background: url('${ pageContext.request.contextPath }/resources/images/gallery/full/10.jpg') center center;" data-overlay="5">
+										<h3 class="widget-user-username text-white">${userVO.id }</h3>
+										<h6 class="widget-user-desc text-white">${userVO.userType }</h6>
+									</div>
+									<div class="widget-user-image">
+										<img class="rounded-circle" src="${ pageContext.request.contextPath }/resources/images/avatar/avatar-12.png" alt="User Avatar">
+									</div>
+									<div class="box-footer">
+										<form action="${ pageContext.request.contextPath }/account/createLeagueAcc" method="post">
+											<button type="submit" id="start_league" class="waves-effect waves-light btn btn-danger btn-lg">새로 시작하기</button>
+										</form>										
+									</div>
+								</div>
 							</div>
-							<div class="badge badge-pill badge-info-light fs-16">Dashboard</div>
-							<div class="badge badge-pill badge-primary-light fs-16">UI</div>
-							<div class="badge badge-pill badge-danger-light fs-16">UX</div>
-							<div class="badge badge-pill badge-warning-light fs-16" data-bs-toggle="tooltip" data-placement="top" title="3 more">+10</div>
-						</div>
-						</div>
-					
-</div>
-</section>
+						</c:if>
+						<c:if test="${not empty leagueAccountVO }">
+							<div class="col-12 col-lg-5 col-xl-5">
+								<div class="box box-widget widget-user">
+									<div class="widget-user-header bg-img bbsr-0 bber-0" style="background: url('${ pageContext.request.contextPath }/resources/images/gallery/full/10.jpg') center center;" data-overlay="5">
+										<h3 class="widget-user-username text-white">${userVO.id }</h3>
+										<h6 class="widget-user-desc text-white">${userVO.userType }</h6>
+									</div>
+									<div class="widget-user-image">
+										<img class="rounded-circle" src="${ pageContext.request.contextPath }/resources/images/avatar/avatar-12.png" alt="User Avatar">
+									</div>
+									<div class="box-footer">
+										<div class="row mb-15">
+											<div class="col-sm-4 text-center">
+												<div class="description-block">
+													<h5 class="description-header">${fn:length(leagueFollowList)}</h5>
+													<span class="description-text">구독자 수</span>
+												</div>
+												<button type="button" class="waves-effect waves-light btn btn-info btn-xs">구독 조회</button>
+											</div>
+											<!-- /.col -->
+											<div class="col-sm-4 be-1 bs-1 text-center">
+												<div class="description-block">
+													<h5 class="description-header">${leagueAccountVO.followPrice }</h5>
+													<span class="description-text">구독 가격</span>
+												</div>
+												<button type="button" class="waves-effect waves-light btn btn-info btn-xs">조정</button>
+											</div>
+											<!-- /.col -->
+											<div class="col-sm-4 text-center">
+												<div class="description-block">
+													<h5 class="description-header">잔액</h5>
+													<span class="description-text">${leagueAccountVO.balance }</span>
+												</div>
+												<button type="button" class="waves-effect waves-light btn btn-info btn-xs">내역 확인</button>
+											</div>
+											<!-- /.col -->
+										</div>
+										<!-- /.row -->
+										<div class="row mb-30 bt-1">
+											<h4 class="title w-p100 mt-10 mb-0 p-20 text-primary">리그 정보</h4>
+											<h5 class="p-15 mb-0">
+												<strong>시작 날짜:</strong> ${leagueAccountVO.regDate }
+											</h5>
+											<h5 class="p-15 mb-0">
+												<strong>주식 보유 개수:</strong> 0개
+												<button type="button" class="waves-effect waves-light btn btn-info btn-xs">조회</button>
+											</h5>
+											<h5 class="p-15 mb-0">
+												<strong>구독 정보:</strong> 0명
+												<button type="button" class="waves-effect waves-light btn btn-info btn-xs">조회</button>
+											</h5>
+										</div>
+										<div class="row mb-30">
+											<div class="clearfix">
+												<button type="submit" id="refresh_league" class="waves-effect waves-light btn btn-danger mb-5">초기화</button>
+												<button type="submit" id="start_league" class="waves-effect waves-light btn btn-success mb-5" data-bs-toggle="modal" data-bs-target="#modal-center2">계좌 선택</button>
 
+											</div>
+										</div>
 
-						<hr>
+									</div>
+								</div>
+							</div>
+						</c:if>
+					</div>
+				</section>
+				<hr>
 			</section>
 		</div>
 	</div>
@@ -224,60 +300,94 @@
 
 
 	<!-- Modal -->
-  <div class="modal center-modal fade" id="modal-center" tabindex="-1">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title">비밀번호 입력</h5>
-			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		  </div>
-		  계좌 비밀번호를 입력해주세요.	
-		    <form method="post">
-		  		<input name="nick" hidden="true" id="form-nick">
-			    <input name="balance" hidden="true" id="form-balance">
-		  		<input name="gcaNumber" hidden="true" id="form-gcaNumber">
-				<input name="regDate" hidden="true" id="form-regDate"> <br><br>
-				<input name="gcaPassword" type="password" id="form-password"> 	
-		 	 <div class="modal-body">
-		 	 	
-		  	</div>
-		  	<div class="modal-footer modal-footer-uniform">
-	  
-			<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-			<button type="submit" class="btn btn-primary float-end">Save changes</button>		  
-		  </div>
-		  </form>		  
+	<div class="modal center-modal fade" id="modal-center" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">비밀번호 입력</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+					계좌 비밀번호를 입력해주세요.
+				<form method="post">
+					<input name="nick" hidden="true" id="form-nick">
+					<input name="balance" hidden="true" id="form-balance">
+					<input name="gcaNumber" hidden="true" id="form-gcaNumber">
+					<input name="regDate" hidden="true" id="form-regDate">
+					<br>
+					<br>
+					<input name="gcaPassword" type="password" id="form-password">
+					<div class="modal-body"></div>
+					<div class="modal-footer modal-footer-uniform">
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+						<button type="submit" class="btn btn-primary float-end">확인</button>
+					</div>
+				</form>
+			</div>
 		</div>
-	  </div>
-	</div>		
-		<div class="control-sidebar-bg"></div>
-		<!-- Vendor JS -->
-		<script src="${ pageContext.request.contextPath }/resources/dash/js/vendors.min.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/chat-popup.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/assets/icons/feather-icons/feather.min.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Flot/jquery.flot.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Flot/jquery.flot.resize.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Flot/jquery.flot.pie.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Flot/jquery.flot.categories.js"></script>
-		<script src="http://www.amcharts.com/lib/3/amcharts.js" type="text/javascript"></script>
-		<script src="http://www.amcharts.com/lib/3/gauge.js" type="text/javascript"></script>
-		<script src="http://www.amcharts.com/lib/3/serial.js" type="text/javascript"></script>
-		<script src="http://www.amcharts.com/lib/3/amstock.js" type="text/javascript"></script>
-		<script src="http://www.amcharts.com/lib/3/pie.js" type="text/javascript"></script>
-		<script src="https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
-		<script src="http://www.amcharts.com/lib/3/plugins/animate/animate.min.js" type="text/javascript"></script>
-		<script src="http://www.amcharts.com/lib/3/plugins/export/export.min.js" type="text/javascript"></script>
-		<script src="http://www.amcharts.com/lib/3/themes/patterns.js" type="text/javascript"></script>
-		<script src="http://www.amcharts.com/lib/3/themes/light.js" type="text/javascript"></script>
-		<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Web-Ticker-master/jquery.webticker.min.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/echarts-master/dist/echarts-en.min.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/echarts-liquidfill-master/dist/echarts-liquidfill.min.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/datatable/datatables.min.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/assets/vendor_plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.js"></script>
+	</div>
 
-		<!-- Crypto Admin App -->
-		<script src="${ pageContext.request.contextPath }/resources/dash/js/template.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard.js"></script>
-		<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard-chart.js"></script>
-</body>          
+
+
+	<div class="modal center-modal fade" id="modal-center2" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">리그 계좌 로그인</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<form method="post" action="${pageContext.request.contextPath}/account/leagueSignin">
+				<div class="modal-body">
+					<p>회원 비밀번호를 입력해주세요</p>					
+						<input name="password" type="password" id="user_password">					
+				</div>
+				<div class="modal-footer modal-footer-uniform">
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+					<button type="submit" class="btn btn-primary float-end">확인</button>
+				</div>
+				</form>
+			</div>
+			
+		</div>
+	</div>
+
+
+
+	<div class="control-sidebar-bg"></div>
+	<!-- Vendor JS -->
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/vendors.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/chat-popup.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/icons/feather-icons/feather.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Flot/jquery.flot.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Flot/jquery.flot.resize.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Flot/jquery.flot.pie.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Flot/jquery.flot.categories.js"></script>
+	<script src="http://www.amcharts.com/lib/3/amcharts.js" type="text/javascript"></script>
+	<script src="http://www.amcharts.com/lib/3/gauge.js" type="text/javascript"></script>
+	<script src="http://www.amcharts.com/lib/3/serial.js" type="text/javascript"></script>
+	<script src="http://www.amcharts.com/lib/3/amstock.js" type="text/javascript"></script>
+	<script src="http://www.amcharts.com/lib/3/pie.js" type="text/javascript"></script>
+	<script src="https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
+	<script src="http://www.amcharts.com/lib/3/plugins/animate/animate.min.js" type="text/javascript"></script>
+	<script src="http://www.amcharts.com/lib/3/plugins/export/export.min.js" type="text/javascript"></script>
+	<script src="http://www.amcharts.com/lib/3/themes/patterns.js" type="text/javascript"></script>
+	<script src="http://www.amcharts.com/lib/3/themes/light.js" type="text/javascript"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Web-Ticker-master/jquery.webticker.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/echarts-master/dist/echarts-en.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/echarts-liquidfill-master/dist/echarts-liquidfill.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/datatable/datatables.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.js"></script>
+
+	<!-- Crypto Admin App -->
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/template.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard-chart.js"></script>
+
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/chat-popup.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/icons/feather-icons/feather.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/sweetalert/sweetalert.min.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/js/sweet-alert.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/notification.js"></script>
+
+</body>
 </html>

@@ -8,7 +8,7 @@
 <script>
 
 </script>
-		<div class="footer-top pt-60">
+			<div class="footer-top pt-60">
             <div class="container">
                 <div class="row">
 					<div class="col-12 col-lg-5">

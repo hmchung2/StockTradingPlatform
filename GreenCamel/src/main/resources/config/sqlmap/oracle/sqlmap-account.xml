@@ -11,15 +11,44 @@
 		<result column="reg_date" property="regDate"></result>	
 	</resultMap>
 	
-	<select id="selectByAccNum" resultMap="accountMap" parameterType="string">
-		select gca_number, nick, id, gca_password, balance, to_char(reg_date , 'yyyy-mm-dd') as reg_date		
-		from gc_account where gca_number = #{gca_number}
+	<resultMap type="leagueAccountVO" id="leagueAccountMap">
+		<result column="reg_date" property="regDate"></result>
+		<result column="follow_price" property="followPrice"></result>
+	</resultMap>
+
+	<resultMap type="leagueFollowVO" id="leagueFollowMap">
+		<result column="follow_date" property="followDate"></result>
+		<result column="follower_id" property="followerId"></result>
+		<result column="followed_id" property="followedId"></result>
+		<result column="follow_price" property="followPrice"></result>		
+	</resultMap>
+	
+	
+	
+	<select id="selectLeagueAcc" resultMap="leagueAccountMap" parameterType="string">
+		select id , balance , reg_date , tier , follow_price from gc_league where id = #{id}
 	</select>
+	
+	<select id="selectFollowers" resultMap="leagueFollowMap" parameterType="string">
+		select no , follower_id , followed_id , follow_date , follow_price from gc_league_follow where followed_id = #{id}
+	</select>
+		
 	
 	<insert id="createAcc" parameterType="accountVO">
 		insert into gc_account(gca_number, nick, id, gca_password, balance ) 
 		values(#{gcaNumber} , #{nick, jdbcType=VARCHAR}  , #{id} , #{gcaPassword},  #{balance} )
 	</insert>		
+	
+	<insert id="createLeagueAcc" parameterType="leagueAccountVO">
+		insert into gc_league(id, balance, tier, follow_price) 
+		values(#{id} , #{balance}  , #{tier} , #{followPrice})
+	</insert>
+	
+
+	<select id="selectByAccNum" resultMap="accountMap" parameterType="string">
+		select gca_number, nick, id, gca_password, balance, to_char(reg_date , 'yyyy-mm-dd') as reg_date		
+		from gc_account where gca_number = #{gca_number}
+	</select>
 	
 	
 	<select id="selectAllAccounts" resultMap="accountMap" parameterType="string">
@@ -31,7 +60,5 @@
 		select gca_number, nick, id, gca_password, balance, to_char(reg_date , 'yyyy-mm-dd') as reg_date
 		from gc_account
 		where id = #{id , jdbcType=VARCHAR} and gca_number = #{gcaNumber, jdbcType=VARCHAR} and gca_password = #{gcaPassword, jdbcType=VARCHAR}		
-	</select>
-	
-		
+	</select>		
 </mapper>

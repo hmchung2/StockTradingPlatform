@@ -67,5 +67,11 @@ public class AccountServiceImpl implements AccountService{
 		return userAccountVO;
 	}
 
+	@Override
+	public AccountVO selectByAccNum(String gcaNumber) {
+		AccountVO userAccountVO = accountDAO.selectByAccNum(gcaNumber);
+		return userAccountVO ;
+	}
+
 
 }

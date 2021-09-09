@@ -14,13 +14,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import gc.co.kr.account.service.AccountService;
 import gc.co.kr.account.vo.AccountVO;
+import gc.co.kr.leagueAccount.LeagueAccountService;
+import gc.co.kr.leagueAccount.LeagueAccountVO;
+import gc.co.kr.leagueAccount.LeagueFollowVO;
 import gc.co.kr.member.vo.MemberVO;
 
-@SessionAttributes({ "accountVO" }) 
 @Controller
 @RequestMapping("/account")
 public class AccountController { 
@@ -28,6 +32,8 @@ public class AccountController {
 	@Autowired
 	private AccountService service;
 	
+	@Autowired
+	private LeagueAccountService leagueService;
 
 	
 	@GetMapping("/contract")
@@ -82,17 +88,21 @@ public class AccountController {
 		System.out.println("전체 계좌 조회");
 		MemberVO userVO  =  (MemberVO)session.getAttribute("userVO");
 		String userID = userVO.getId();
-		List<AccountVO> list =  service.selectAllAccounts(userID);
+		List<AccountVO> list =  service.selectAllAccounts(userID);		
 		model.addAttribute("list", list);
-		Map<String, String> map = new HashMap<>(); 
-		model.addAttribute("map" , map);
+		List<LeagueFollowVO> leagueFollowVOlist = leagueService.selectFollowers(userID);
+		LeagueAccountVO leagueAccountVO = leagueService.selectLeagueAcc(userID);
+		model.addAttribute("leagueFollowList", leagueFollowVOlist );
+		model.addAttribute("leagueAccountVO", leagueAccountVO);		
 		return "gcaccount/viewaccounts";
 	}	
+	
+	
 	
 	@PostMapping("/signin")
 	public String accountDetail(AccountVO accountVO, Model model, HttpSession session) {
 		System.out.println("계좌 상세");
-		//ModelAndView mav = new ModelAndView();		
+		//ModelAndView mav = new ModelAndView();
 		MemberVO userVO  =  (MemberVO)session.getAttribute("userVO");
 		accountVO.setId(userVO.getId());
 		System.out.println("accountVO : " + accountVO);
@@ -105,7 +115,7 @@ public class AccountController {
 			model.addAttribute("msg" , msg);			
 			System.out.println(msg);
 		}else {
-			model.addAttribute("accountVO", accountVO);
+			session.setAttribute("accountVO", accountVO);
 			System.out.println("setting user account");
 			String dest = (String) session.getAttribute("dest2");
 			if (dest != null) {
@@ -119,10 +129,95 @@ public class AccountController {
 		return view;		
 	}
 	
+	
+	@PostMapping("/leagueSignin")
+	public String leagueAccountDetail(@RequestParam("password") String password , Model model , HttpSession session  ) {
+		System.out.println("league sign in");
+		MemberVO userVO  =  (MemberVO)session.getAttribute("userVO");
+		String view;
+		String msg;
+		if( password != null && !password.equals(userVO.getPassword() ) ) {
+			System.out.println("password : " + password);
+			System.out.println("userpassword : " + userVO.getPassword());
+			msg ="패스워드 정보가 잘못 입력 되었습니다.";
+			view = showAllAccounts(model, session);
+			model.addAttribute("msg", msg);
+		}else {
+			LeagueAccountVO leagueAccountVO = leagueService.selectLeagueAcc(userVO.getId());
+			if(leagueAccountVO == null) {
+				msg ="리그 계좌가 없습니다.";
+				view = showAllAccounts(model, session);
+				model.addAttribute("msg" , msg);
+				System.out.println( msg);
+			}else {
+				session.setAttribute("leagueAccountVO", leagueAccountVO);
+				System.out.println("setting user league Account");
+				String dest = (String) session.getAttribute("dest2");
+				if(dest != null) {
+					view = "redirect:" + dest;
+					session.removeAttribute("dest");
+				}else {
+					view = "redirect:/";					
+				}
+				System.out.println("성공");
+				
+			}
+		}
+		
+		System.out.println("post viewleagueaccounts : " + view);
+		return view;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@PostMapping("/createLeagueAcc")
+	public String createLeagueAcc(Model model ,  HttpSession session) {
+		System.out.println("creating new League Account");
+		LeagueAccountVO leagueAccountVO =  new LeagueAccountVO();
+		String id = ((MemberVO)session.getAttribute("userVO")).getId();		
+		leagueAccountVO.setId(id);
+		leagueAccountVO.setBalance(100000000);
+		leagueAccountVO.setFollowPrice(0);
+		leagueAccountVO.setTier("BRONZE");
+		LeagueAccountVO existingCheck = leagueService.selectLeagueAcc(id);
+		String msg = "";
+		if(existingCheck != null) {
+			msg = "warning:Error:이미 리그 계좌가 존재 합니다. 계좌 초기화 하시겠습니까?";
+		}else {
+			int row = leagueService.createLeagueAcc(leagueAccountVO);			
+			if(row == 1) {
+				msg = "success:회원가입 성공:리그 계좌를 성공적으로 생성 했습니다.";			
+			}else {
+				msg = "warning:Error:계좌 생성 중 문제가 발생했습니다.";
+			}
+		}	
+		session.setAttribute("msg", msg);
+		return "redirect:/account/signin";	
+	}
+	
+	
+	@GetMapping("/signout")
+	public String accountSignout(HttpSession session) {
+		session.removeAttribute("accountVO");
+		return "redirect:/account/signin";
+	}
+		
 	@GetMapping("/hts")
 	public String getHTC() {
 		return "gcaccount/hts";
 	}
+	
+	
+	
 	
 	
 	//view =  "gcaccount/htc";

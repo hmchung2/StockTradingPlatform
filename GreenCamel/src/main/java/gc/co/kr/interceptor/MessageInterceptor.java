@@ -9,12 +9,13 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class MessageInterceptor extends HandlerInterceptorAdapter{
 	
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
-		
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{		
 		HttpSession session = request.getSession();
 		String msg = (String) session.getAttribute("msg");
 		if(msg != null ) {
 			System.out.println("from MessageInterceptor : " +  msg);
+			request.setAttribute("msg", msg);
 			session.removeAttribute("msg");
 		}
 		return true;

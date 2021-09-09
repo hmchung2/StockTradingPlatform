@@ -13,7 +13,7 @@ public class RealTimeStockVO {
 	private float ask;
 	private float bidSize;
 	private float askSize;
-	private int floatingShares;
+	private long floatingShares;
 	private float shortRatio;
 	private float epsForward;
 	private float bookValue;
@@ -24,18 +24,8 @@ public class RealTimeStockVO {
 	private float marketDayHigh;
 	private float marketDayLow;
 	private float marketVolume;
+	private int unixTime;
 		
-	@Override
-	public String toString() {
-		return "RealTimeStockVO [inorder=" + inorder + ", time=" + time + ", symbol=" + symbol + ", marketPrice="
-				+ marketPrice + ", shareOutstanding=" + shareOutstanding + ", avgDailyVolume10day="
-				+ avgDailyVolume10day + ", avgDailyVolume3month=" + avgDailyVolume3month + ", dividendsPerShare="
-				+ dividendsPerShare + ", bid=" + bid + ", ask=" + ask + ", bidSize=" + bidSize + ", askSize=" + askSize
-				+ ", floatingShares=" + floatingShares + ", shortRatio=" + shortRatio + ", epsForward=" + epsForward
-				+ ", bookValue=" + bookValue + ", sharesShort=" + sharesShort + ", dividendsYield=" + dividendsYield
-				+ ", marketChange=" + marketChange + ", marketChangePercent=" + marketChangePercent + ", marketDayHigh="
-				+ marketDayHigh + ", marketDayLow=" + marketDayLow + ", marketVolume=" + marketVolume + "]";
-	}
 	public RealTimeStockVO() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -112,10 +102,10 @@ public class RealTimeStockVO {
 	public void setAskSize(float askSize) {
 		this.askSize = askSize;
 	}
-	public int getFloatingShares() {
+	public long getFloatingShares() {
 		return floatingShares;
 	}
-	public void setFloatingShares(int floatingShares) {
+	public void setFloatingShares(long floatingShares) {
 		this.floatingShares = floatingShares;
 	}
 	public float getShortRatio() {
@@ -177,8 +167,27 @@ public class RealTimeStockVO {
 	}
 	public void setMarketVolume(float marketVolume) {
 		this.marketVolume = marketVolume;
-	} 
-	
+	}
+	public int getUnixTime() {
+		return unixTime;
+	}
+	public void setUnixTime(int unixTime) {
+		this.unixTime = unixTime;
+	}
+	@Override
+	public String toString() {
+		return "RealTimeStockVO [inorder=" + inorder + ", time=" + time + ", symbol=" + symbol + ", marketPrice="
+				+ marketPrice + ", shareOutstanding=" + shareOutstanding + ", avgDailyVolume10day="
+				+ avgDailyVolume10day + ", avgDailyVolume3month=" + avgDailyVolume3month + ", dividendsPerShare="
+				+ dividendsPerShare + ", bid=" + bid + ", ask=" + ask + ", bidSize=" + bidSize + ", askSize=" + askSize
+				+ ", floatingShares=" + floatingShares + ", shortRatio=" + shortRatio + ", epsForward=" + epsForward
+				+ ", bookValue=" + bookValue + ", sharesShort=" + sharesShort + ", dividendsYield=" + dividendsYield
+				+ ", marketChange=" + marketChange + ", marketChangePercent=" + marketChangePercent + ", marketDayHigh="
+				+ marketDayHigh + ", marketDayLow=" + marketDayLow + ", marketVolume=" + marketVolume + ", unixTime="
+				+ unixTime + "]";
+	}
+		
+
 	
 	
 }

@@ -17,8 +17,8 @@ transform:scale(0.75);
 
 </script>
 
-<nav hidden class="nav-white nav-transparent dark-overlay">
-	<div class="nav-header" style="max-height:63px;"> <a href="${ pageContext.request.contextPath }/" style="margin-top:0px; padding-top:0px; padding-bottom:20px;" class="brand"> <img id="headLogo" src="${ pageContext.request.contextPath }/resources/images/gc_transparent2.png" alt="" /></a>						
+<nav hidden class="nav-white nav-transparent">
+	<div class="nav-header" style="max-height:62px;"> <a href="${ pageContext.request.contextPath }/" style="margin-top:0px; padding-top:0px; padding-bottom:20px;" class="brand"> <img id="headLogo" src="${ pageContext.request.contextPath }/resources/images/gc_transparent2.png" alt="" /></a>						
 		<button class="toggle-bar">
 			<span class="ti-menu"></span>
 		</button>

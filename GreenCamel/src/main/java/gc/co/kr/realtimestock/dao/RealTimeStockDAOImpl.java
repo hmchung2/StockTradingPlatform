@@ -1,5 +1,6 @@
 package gc.co.kr.realtimestock.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,12 +27,15 @@ public class RealTimeStockDAOImpl implements RealTimeStockDAO{
 	}
 	
 	@Override
-	public List<RealTimeStockVO> selectStockByTimeSymbols(Map<String , String> dates , List<String> symbols){
-		String symbolStr = String.join(",", symbols);
-		System.out.println(symbolStr);
-		dates.put("symbols", symbolStr);		
-		List<RealTimeStockVO> stockList = sqlSessionTemplate.selectList("realtimestock.RealTimeStockDAO.selectByTimeRangeSymbols" , dates );		
+	public List<RealTimeStockVO> selectStockByTimeSymbols(Map<String , Object> params){
+		List<RealTimeStockVO> stockList = sqlSessionTemplate.selectList("realtimestock.RealTimeStockDAO.selectByTimeRangeSymbols" , params );		
 		return stockList;
 	}
 
+	@Override
+	public List<Map<String, Object> > getInitValues(Map<String, Object> params) {
+		// TODO Auto-generated method stub		
+		List<Map<String, Object>> candleList = sqlSessionTemplate.selectList("realtimestock.RealTimeStockDAO.getInitValues" , params );				
+		return candleList;
+	}
 }
