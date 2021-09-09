@@ -26,15 +26,7 @@ $(function () {
     }
 
 	
-//ticker
- 	if ($('#webticker-1').length) {   
-		$("#webticker-1").webTicker({
-			height:'auto', 
-			duplicate:true, 
-			startEmpty:false, 
-			rssfrequency:5
-		});
-	}
+
 	
 	
 }); // End of use strict
