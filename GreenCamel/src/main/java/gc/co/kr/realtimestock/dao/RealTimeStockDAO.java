@@ -14,5 +14,7 @@ public interface RealTimeStockDAO {
 	
 	List<Map<String,Object>> getInitValues(Map<String,Object> params);
 	
+	List<Map<String,Object>> getInitValuesLines(Map<String,Object> params);
 	
+	List<RealTimeStockVO> getRealTimeStockData(Map<String,Object> params);
 }

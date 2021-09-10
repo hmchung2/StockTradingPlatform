@@ -38,4 +38,22 @@ public class RealTimeStockDAOImpl implements RealTimeStockDAO{
 		List<Map<String, Object>> candleList = sqlSessionTemplate.selectList("realtimestock.RealTimeStockDAO.getInitValues" , params );				
 		return candleList;
 	}
+	
+	@Override
+	public List<Map<String, Object> > getInitValuesLines(Map<String, Object> params) {
+		List<Map<String, Object>> candleList = sqlSessionTemplate.selectList("realtimestock.RealTimeStockDAO.getInitValuesLines" , params );				
+		return candleList;
+	}
+
+	@Override
+	public List<RealTimeStockVO> getRealTimeStockData(Map<String, Object> params) {
+		
+		
+		List<RealTimeStockVO> result = sqlSessionTemplate.selectList("realtimestock.RealTimeStockDAO.getRealTimeStockData" , params );		
+		return result ;
+	}
+	
+	
+	
+	
 }

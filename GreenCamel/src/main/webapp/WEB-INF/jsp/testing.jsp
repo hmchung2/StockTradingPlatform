@@ -47,94 +47,420 @@
 	}
  */
 
-		test = null
+		
 		allSymbols  = []
 		chartDict = {};
-		dataDict = {};
-		updateFlag = false;
-		
-		
+ 		dataDict = {}
+						
 		clicked_box = "none";
-		box_counts = 0;
+		box_counts = 0;		
+		realdata = {}
 		
-		each_box = {"symbol" : null,
-					"type" : "candlestick",
-					"tic" : 1800,
-					"realtime-flag" : false}
-		box_info = {"one" : each_box , 
-					"two" : each_box,
-					"three" : each_box}						
-				
+		
+		
+		box_info = {}
+		box_info["one"] =  {"symbol" : null,
+				"type" : "candlestick",
+				"tic" : 1800,
+				"realtime-flag" : false,
+				"start_date": null,
+				"end_date" : null}
+		box_info["two"] =  {"symbol" : null,
+				"type" : "candlestick",
+				"tic" : 1800,
+				"realtime-flag" : false,
+				"start_date": null,
+				"end_date" : null}
+		box_info["three"] =  {"symbol" : null,
+				"type" : "candlestick",
+				"tic" : 1800,
+				"realtime-flag" : false,
+				"start_date": null,
+				"end_date" : null}		
+		
 		if (localStorage.getItem("allSymbols") != null
 				&& localStorage.getItem("allSymbols") != "") {
 			allSymbols = localStorage.getItem("allSymbols").split(",")
 		}			
 	
-		function getinitdata(symbol){
+		var oneInterval;
+		oneIntervalFlag = false
+		var twoInterval;
+		twoIntervalFlag = false;
+		var threeInterval;
+		threeInterval = false;
+		
+		function startIntervalOne(  symbol , tic , type  ){	
+			if(oneIntervalFlag){
+				clearInterval(oneInterval)
+			}
+			if( type == "candlestick"){
+				console.log("candle real time data started")
+				oneInterval = setInterval(function(){
+					$.ajax({type : 'get',
+			      		url : "${pageContext.request.contextPath }/ajax/getRealTimeStock.json",
+			      		data : {interval : tic,
+			      				symbol : symbol,
+			      				startTime : 1631200787,  // ~~(Date. now() / 1000) - tic,
+			      				endTime :   1631300887  // ~~(Date. now() / 1000) 
+			      		},
+			      		contentType : "application/x-www-form-urlencoded;charset=ISO-8859-15",
+			      		datatype : 'json',
+			      		success : function(result) {	      			
+			      			console.log("one real time success")
+			      			
+			      			
+			      			dataDict[box_info["one"]["symbol"]].push(
+			      					{
+			      						x : new Date(parseInt(result.unixTime) * 1000),  
+			   							y : [result.firstPrice, 
+			   								result.maxPrice,
+			   								result.minPrice,
+			   								result.lastPrice]	
+			      						}					      			
+			      			)
+			      			if(dataDict[box_info["one"]["symbol"]].length > 500){
+			      				console.log("over 500 data deleting")
+			      				for (var i = dataDict[box_info["one"]["symbol"]].length  - 1; i >= 0; i--) {
+									  // remove element if index is odd
+								  if (i % 2 == 1)
+									  dataDict[box_info["one"]["symbol"]].splice(i, 1);
+								}	
+			      			}
+			      			chartDict[box_info["one"]["symbol"]].updateSeries([{
+			      				data: dataDict[box_info["one"]["symbol"]]
+					       	}]) 						       
+			      		},
+			      		error : function() {
+			      			console.log("error")
+			      		}
+			      	})					
+				}, 10 * 1000 ) //tic * 1000				
+			}else if( type == "line"){
+				oneInterval = setInterval(function(){
+					console.log("line graph real time starting")										
+					chartDict[box_info["one"]["symbol"]].addData(
+							{ date: new Date(1631300887    * 1000 ), 
+  				 				price: 150,  
+  				 				quantity: 300 },
+					         1);					
+				}, 3000)								
+			}				
+		}
+		
+			
+			
+		
+		function getinitdata( box , symbol ){
+			
+			box_info[box]['type'] = "candlestick"
+			delete chartDict[symbol];
+			delete dataDict[symbol];
+		
 			console.log("symbol : " + symbol)
-			console.log("tic : " +   box_info[clicked_box]['tic'])
+			console.log("box : " + box)
+			console.log("tic : " +   box_info[box]['tic'])
 			$.ajax({type : 'get',
 	      		url : "${pageContext.request.contextPath }/ajax/getInitStockValues.json",
-	      		data : {interval : box_info[clicked_box]['tic'],
+	      		data : {interval : box_info[box]['tic'],
 	      				symbols : symbol,
-	      				fullTime : 1630460051
+	      				startTime : 1631200787,
+	      				endTime :   1631220787
 	      		},
 	      		contentType : "application/x-www-form-urlencoded;charset=ISO-8859-15",
 	      		datatype : 'json',
-	      		success : function(data) {	      			
-	      			console.log("success")	      			
-	      			for(let i in data){
-	      				currentData = data[i]	      				
-	      				if(dataDict[currentData.symbol] == undefined){
-	      					dataDict[currentData.symbol] = [  
-	      						{
-	      							x : new Date( parseInt(currentData.grp_id) * 1000 ),
-	      							y : [currentData.min_created_value,	      								
-	      								currentData.max_value,
-	      								currentData.min_value,
-	      								currentData.max_created_value]	      								
-	      						}	      						
-	      					]
-	      				}else{
-	      					dataDict[currentData.symbol].push({
-	      						x : new Date(parseInt(currentData.grp_id) * 1000),
-      							y : [currentData.min_created_value, 
-      								currentData.max_value,
-      								currentData.min_value,
-      								currentData.max_created_value]	
-	      					}) 	      					
-	      				}	      				
-	      			}
+	      		success : function(result) {	      			
+	      			console.log("success")
+	      			let data = [];
+	      			for(let i in result){
+	      				currentData = result[i]	      					      				
+      					data.push({
+      						x : new Date(parseInt(currentData.grp_id) * 1000),
+   							y : [currentData.min_created_value, 
+   								currentData.max_value,
+   								currentData.min_value,
+   								currentData.max_created_value]	
+      						}) 	      					
+     					}	      				
+	      			
+	      			dataDict[symbol] = data
+	      																		
+					console.log( "newSymbol : " +   symbol)					
+					let chartId = "chart_" +  symbol																																			
+					let chartDiv = document.createElement("div");									
+					chartDiv.id = chartId									
+					let chartBody = document.querySelector(".box-" + box + "-body .chart" )
+					chartBody.appendChild(chartDiv);																																		
+									
+					box_info[box]['symbol'] =  symbol;
+					options = {
+							chart : {
+								height : 350,
+								type : 'candlestick',
+							},
+							series : [ {
+								data : data
+							} ],
+							title : {
+								text : 'CandleStick Chart',
+								align : 'left'
+							},
+							xaxis : {
+								type : 'datetime'
+							},
+							yaxis : {
+								tooltip : {
+									enabled : true
+								}
+							}
+						}
+					chart = new ApexCharts(document.querySelector("#chart_" + symbol  ),options);
+					chart.render();
+					chartDict[symbol] =  chart;
+					/* chart.updateSeries([ {
+						data : data
+					}]) */
+					
+				startIntervalOne(symbol , box_info[box]['tic'] ,  "candlestick"); 
+				oneIntervalFlag = true;
+					
+										      			
 	      		},
 	      		error : function() {
 	      			console.log("error")
 	      			}
 	      		})
-		}
+			}
 		
-		function startInterval() {
-				console.log("starting to update")			
-				interval = setInterval(function() {
-					let symbolkeys = Object.keys( chartDict)  
-					for(let i in  symbolkeys){
-						csymbol =  symbolkeys[i]
-						let currentChart = chartDict[csymbol]
-						let currentData = dataDict[csymbol]
-						currentChart.updateSeries([ {
-							data : currentData
-							} ])
-						}														
-					}, 3000);								
+		
+			function initData(box){
+				clicked_box = box;
+				let chartbox = document.querySelector("#chartbox");				
+			}
+		
+		
+			function getinitdataLine(box, symbol){
+					let data = [];
+					delete chartDict[symbol];
+					delete dataDict[symbol];					
+					box_info[box]['type'] = "line"
+					let chartId = "linechart_" +  symbol
+					let chartDiv = document.createElement("div");									
+					chartDiv.id = chartId
+					chartDiv.classList.add("h-550");
+					let chartBody = document.querySelector(".box-" + box + "-body .chart" )
+					chartBody.appendChild(chartDiv);	
+					am4core.useTheme(am4themes_animated);					
+					var chart = am4core.create("linechart_" +  symbol, am4charts.XYChart);
+					
+					
+					chart.padding(0, 15, 0, 15);
+					chart.colors.step = 3;
+					$.ajax({type : 'get',
+			      		url : "${pageContext.request.contextPath }/ajax/getInitStockValuesLines.json",
+			      		data : {interval : box_info[box]['tic'],
+			      				symbols : symbol,
+			      				startTime : 1631200787,
+			      				endTime :   1631220787
+			      		},
+			      		contentType : "application/x-www-form-urlencoded;charset=ISO-8859-15",
+			      		datatype : 'json',
+			      		success : function(result){	      			
+			      			console.log("success")	      			
+			      			for(let i in result){
+			      				currentData = result[i]	    
+			  				 	data.push({ date: new Date( parseInt(currentData.grp_id) * 1000 ), 
+			  				 				price: currentData.avg_price,  
+			  				 				quantity: currentData.max_vol } );			      				
+			      				}
+			      			var interfaceColors = new am4core.InterfaceColorSet();
+			      			chart.data = data;
+			      			chart.leftAxesContainer.layout = "vertical";
+							
+							// uncomment this line if you want to change order of axes
+							//chart.bottomAxesContainer.reverseOrder = true;
+							
+							var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+							
+							dateAxis.renderer.grid.template.location = 0;
+							dateAxis.renderer.ticks.template.length = 8;
+							dateAxis.renderer.ticks.template.strokeOpacity = 0.1;
+							dateAxis.renderer.grid.template.disabled = true;
+							dateAxis.renderer.inside = true;
+							dateAxis.renderer.axisFills.template.disabled = true;
+							dateAxis.renderer.ticks.template.disabled = true;
+							
+							dateAxis.renderer.ticks.template.strokeOpacity = 0.2;
+
+							// these two lines makes the axis to be initially zoomed-in
+							//dateAxis.start = 0.7;
+							//dateAxis.keepSelection = true;
+
+							var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+							valueAxis.tooltip.disabled = true;
+							valueAxis.zIndex = 1;
+							valueAxis.renderer.baseGrid.disabled = true;
+							valueAxis.renderer.minLabelPosition = 0.05;
+							valueAxis.renderer.maxLabelPosition = 0.95;
+
+							// Set up axis
+							valueAxis.renderer.inside = true;
+							valueAxis.height = am4core.percent(60);
+							valueAxis.renderer.labels.template.verticalCenter = "bottom";
+							valueAxis.renderer.labels.template.padding(2,2,2,2);
+							//valueAxis.renderer.maxLabelPosition = 0.95;
+							valueAxis.renderer.fontSize = "0.8em"
+
+							// uncomment these lines to fill plot area of this axis with some color
+							valueAxis.renderer.gridContainer.background.fill = interfaceColors.getFor("alternativeBackground");
+							valueAxis.renderer.gridContainer.background.fillOpacity = 0.05;
+
+
+							var series = chart.series.push(new am4charts.LineSeries());
+							series.dataFields.dateX = "date";
+							series.dataFields.valueY = "price";
+							series.tooltipText = "{valueY.value}";
+							series.name = "Series 1";
+							
+
+							var valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
+							valueAxis2.tooltip.disabled = true;
+
+							// this makes gap between panels
+							valueAxis2.marginTop = 30;
+							valueAxis2.renderer.baseGrid.disabled = true;
+							valueAxis2.renderer.inside = true;
+							valueAxis2.height = am4core.percent(40);
+							valueAxis2.zIndex = 3
+							valueAxis2.renderer.labels.template.verticalCenter = "bottom";
+							valueAxis2.renderer.labels.template.padding(2,2,2,2);
+							//valueAxis2.renderer.maxLabelPosition = 0.95;
+							valueAxis2.renderer.fontSize = "0.8em"
+
+							// uncomment these lines to fill plot area of this axis with some color
+							valueAxis2.renderer.gridContainer.background.fill = interfaceColors.getFor("alternativeBackground");
+							valueAxis2.renderer.gridContainer.background.fillOpacity = 0.05;
+
+							var series2 = chart.series.push(new am4charts.ColumnSeries());
+							series2.columns.template.width = am4core.percent(50);
+							series2.dataFields.dateX = "date";
+							series2.dataFields.valueY = "quantity";
+							series2.yAxis = valueAxis2;
+							series2.tooltipText = "{valueY.value}";
+							series2.name = "Series 2";
+
+							chart.cursor = new am4charts.XYCursor();
+							chart.cursor.xAxis = dateAxis;
+
+							var scrollbarX = new am4charts.XYChartScrollbar();
+							scrollbarX.series.push(series);
+							scrollbarX.marginBottom = 20;
+							chart.scrollbarX = scrollbarX;
+							chartDict[symbol] = chart
+							
+							
+							
+							
+							chart.events.on("datavalidated", function () {
+							    dateAxis.zoom({ start: 1 / 15, end: 1.2 }, false, true);
+							});
+							
+							dateAxis.interpolationDuration = 500;
+							dateAxis.rangeChangeDuration = 500;
+							series.interpolationDuration = 500;
+							series.defaultState.transitionDuration = 0;
+							series.tensionX = 0.8;
+							chart.events.on("datavalidated", function () {
+							    dateAxis.zoom({ start: 1 / 15, end: 1.2 }, false, true);
+							});
+							
+							
+							
+							
+							startIntervalOne(symbol , box_info[box]['tic'] ,  "line") 
+							oneIntervalFlag = true;
+							
+							series.fillOpacity = 1;
+							var gradient = new am4core.LinearGradient();
+							gradient.addColor(chart.colors.getIndex(0), 0.2);
+							gradient.addColor(chart.colors.getIndex(0), 0);
+							series.fill = gradient;
+
+							// this makes date axis labels to fade out
+							dateAxis.renderer.labels.template.adapter.add("fillOpacity", function (fillOpacity, target) {
+							    var dataItem = target.dataItem;
+							    return dataItem.position;
+							})
+
+							// need to set this, otherwise fillOpacity is not changed and not set
+							dateAxis.events.on("validated", function () {
+							    am4core.iter.each(dateAxis.renderer.labels.iterator(), function (label) {
+							        label.fillOpacity = label.fillOpacity;
+							    })
+							})
+
+							// this makes date axis labels which are at equal minutes to be rotated
+							dateAxis.renderer.labels.template.adapter.add("rotation", function (rotation, target) {
+							    var dataItem = target.dataItem;
+							    if (dataItem.date && dataItem.date.getTime() == am4core.time.round(new Date(dataItem.date.getTime()), "minute").getTime()) {
+							        target.verticalCenter = "middle";
+							        target.horizontalCenter = "left";
+							        return -90;
+							    }
+							    else {
+							        target.verticalCenter = "bottom";
+							        target.horizontalCenter = "middle";
+							        return 0;
+							    }
+							})
+
+							// bullet at the front of the line
+							var bullet = series.createChild(am4charts.CircleBullet);
+							bullet.circle.radius = 5;
+							bullet.fillOpacity = 1;
+							bullet.fill = chart.colors.getIndex(0);
+							bullet.isMeasured = false;
+
+							series.events.on("validated", function() {
+							    bullet.moveTo(series.dataItems.last.point);
+							    bullet.validatePosition();
+							});
+							
+			      			},
+			      		error : function() {
+			      			console.log("error")
+			      			}
+			      		})
 				}
+				
+			function graphType(box , type){
+				console.log("graphType : " + box + " : " + type)
+				if(type == box_info[box]["type"]  ){
+					console.log("already the same type")
+				}else{
+					current_symbol = box_info[box]["symbol"]
+					if(type == "line"){						
+						$("#chart-" + box).remove("#chart_" +  current_symbol  );
+						var previousChart = document.getElementById("chart_" +  current_symbol);
+						var parentDiv = previousChart.parentNode;
+						parentDiv.removeChild(previousChart);						
+						box_info[box]['type'] = "line"
+						getinitdataLine( box , current_symbol )
+						
+					}else if(type == "candlestick"){
+						$("#chart-" + box).remove("#chart_" +  current_symbol);
+						var previousChart = document.getElementById("linechart_" +  current_symbol);
+						var parentDiv = previousChart.parentNode;
+						parentDiv.removeChild(previousChart);
+						box_info[box]['type'] = "candle"
+						getinitdata( box , current_symbol  )
+					}
+				}	
+			}
+			
+
+			
 		
-		function initData(box){
-			clicked_box = box;
-			let chartbox = document.querySelector("#chartbox");				
-		}
-		
-		//
-		data = [];
-		//
 		$(document).ready(function() {
 					$("#box-one").hide()
 					$("#box-two").hide()
@@ -146,56 +472,13 @@
 					}									
 					let chartbox = document.querySelector("#chartbox")
 					$('#add-symbol').click(function(){
-						if (!allSymbols.includes($("#symbol-code").val() )) {
-							
+						if (!allSymbols.includes($("#symbol-code").val() )) {							
 							var newSymbol = $("#symbol-code").val()																	
-							console.log( "newSymbol : " +   newSymbol)
-							
-							getinitdata( newSymbol );	
-							
-							let chartId = "chart_" +  newSymbol																																			
-							let chartDiv = document.createElement("div");									
-							chartDiv.id = chartId									
-							let chartBody = document.querySelector(".box-" + clicked_box + "-body .chart" )
-							chartBody.appendChild(chartDiv);																																		
-							allSymbols.push(newSymbol);				
-							box_info[clicked_box]['symbol'] =  newSymbol;
-							options = {
-									chart : {
-										height : 350,
-										type : box_info[clicked_box]['type'],
-									},
-									series : [ {
-										data : []
-									} ],
-									title : {
-										text : 'CandleStick Chart',
-										align : 'left'
-									},
-									xaxis : {
-										type : 'datetime'
-									},
-									yaxis : {
-										tooltip : {
-											enabled : true
-										}
-									}
-								}
-							chart = new ApexCharts(document.querySelector("#chart_" + newSymbol  ),options);
-							chart.render();
-							chartDict[newSymbol] =  chart;
-							dataDict[newSymbol] = [];																														
-							myAlarm("success:종목:"
-									+ $("#symbol-code").val()
-									+ " 종목 성공");
+							console.log( "newSymbol : " +   newSymbol)							
+							getinitdata(  clicked_box , newSymbol  );																							
 						} else {
 							myAlarm("warning:실패:이미 화면에 존재 합니다.");
-						}
-						if(updateFlag == false){
-							updateFlag = true;
-							startInterval();
-						}
-												
+						}												
 					})
 				
 					
@@ -275,187 +558,7 @@
 					$('#box-three').show()
 
 				})
-				
-				
-				
-				
-				
-				
-				
-				// Themes begin
-				am4core.useTheme(am4themes_kelly);
-				// Themes end
-				
-				var chart = am4core.create("market-btc", am4charts.XYChart);
-				chart.padding(0, 15, 0, 15);
-				chart.colors.step = 3;
-				 			
-				
-				var price1 = 1000;
-				var price2 = 2000;
-				var price3 = 3000;
-				var quantity = 1000;
-				for (var i = 15; i < 3000; i++) {
-				  price1 += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 100);
-				  price2 += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 100);
-				  price3 += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 100);
-				
-				  if (price1 < 100) {
-				    price1 = 100;
-				  }
-				
-				  if (price2 < 100) {
-				    price2 = 100;
-				  }
-				
-				  if (price3 < 100) {
-				    price3 = 100;
-				  }    
-				
-				  quantity += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 500);
-				
-				  if (quantity < 0) {
-				    quantity *= -1;
-				  }
-				  data.push({ date: new Date(2000, 0, i), price1: price1, price2:price2, price3:price3, quantity: quantity } );
-				}
-				
-				
-				chart.data = data;
-				// the following line makes value axes to be arranged vertically.
-				chart.leftAxesContainer.layout = "vertical";
-					
-				// uncomment this line if you want to change order of axes
-				//chart.bottomAxesContainer.reverseOrder = true;
-				
-				var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-				dateAxis.renderer.grid.template.location = 0;
-				dateAxis.renderer.ticks.template.length = 8;
-				dateAxis.renderer.ticks.template.strokeOpacity = 0.1;
-				dateAxis.renderer.grid.template.disabled = true;
-				dateAxis.renderer.ticks.template.disabled = false;
-				dateAxis.renderer.ticks.template.strokeOpacity = 0.2;
-				dateAxis.renderer.minLabelPosition = 0.01;
-				dateAxis.renderer.maxLabelPosition = 0.99;
-				dateAxis.keepSelection = true;
-				
-				dateAxis.groupData = true;
-				dateAxis.minZoomCount = 5;
-				
-				// these two lines makes the axis to be initially zoomed-in
-				// dateAxis.start = 0.7;
-				// dateAxis.keepSelection = true;
-				
-				var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-				valueAxis.tooltip.disabled = true;
-				valueAxis.zIndex = 1;
-				valueAxis.renderer.baseGrid.disabled = true;
-				// height of axis
-				valueAxis.height = am4core.percent(65);
-				
-				valueAxis.renderer.gridContainer.background.fill = am4core.color("#000000");
-				valueAxis.renderer.gridContainer.background.fillOpacity = 0.05;
-				valueAxis.renderer.inside = true;
-				valueAxis.renderer.labels.template.verticalCenter = "bottom";
-				valueAxis.renderer.labels.template.padding(2, 2, 2, 2);
-				
-				//valueAxis.renderer.maxLabelPosition = 0.95;
-				valueAxis.renderer.fontSize = "0.8em"
-				
-				var series1 = chart.series.push(new am4charts.LineSeries());
-				series1.dataFields.dateX = "date";
-				series1.dataFields.valueY = "price1";
-				series1.dataFields.valueYShow = "changePercent";
-				series1.tooltipText = "{name}: {valueY.changePercent.formatNumber('[#0c0]+#.00|[#c00]#.##|0')}%";
-				series1.name = "Stock A";
-				series1.tooltip.getFillFromObject = false;
-				series1.tooltip.getStrokeFromObject = true;
-				series1.tooltip.background.fill = am4core.color("#fff");
-				series1.tooltip.background.strokeWidth = 2;
-				series1.tooltip.label.fill = series1.stroke;
-				
-				var series2 = chart.series.push(new am4charts.LineSeries());
-				series2.dataFields.dateX = "date";
-				series2.dataFields.valueY = "price2";
-				series2.dataFields.valueYShow = "changePercent";
-				series2.tooltipText = "{name}: {valueY.changePercent.formatNumber('[#0c0]+#.00|[#c00]#.##|0')}%";
-				series2.name = "Stock B";
-				series2.tooltip.getFillFromObject = false;
-				series2.tooltip.getStrokeFromObject = true;
-				series2.tooltip.background.fill = am4core.color("#fff");
-				series2.tooltip.background.strokeWidth = 2;
-				series2.tooltip.label.fill = series2.stroke;
-				
-				var series3 = chart.series.push(new am4charts.LineSeries());
-				series3.dataFields.dateX = "date";
-				series3.dataFields.valueY = "price3";
-				series3.dataFields.valueYShow = "changePercent";
-				series3.tooltipText = "{name}: {valueY.changePercent.formatNumber('[#0c0]+#.00|[#c00]#.##|0')}%";
-				series3.name = "Stock C";
-				series3.tooltip.getFillFromObject = false;
-				series3.tooltip.getStrokeFromObject = true;
-				series3.tooltip.background.fill = am4core.color("#fff");
-				series3.tooltip.background.strokeWidth = 2;
-				series3.tooltip.label.fill = series3.stroke;
-				
-				var valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
-				valueAxis2.tooltip.disabled = true;
-				// height of axis
-				valueAxis2.height = am4core.percent(35);
-				valueAxis2.zIndex = 3
-				// this makes gap between panels
-				valueAxis2.marginTop = 30;
-				valueAxis2.renderer.baseGrid.disabled = true;
-				valueAxis2.renderer.inside = true;
-				valueAxis2.renderer.labels.template.verticalCenter = "bottom";
-				valueAxis2.renderer.labels.template.padding(2, 2, 2, 2);
-				//valueAxis.renderer.maxLabelPosition = 0.95;
-				valueAxis2.renderer.fontSize = "0.8em";
-				
-				valueAxis2.renderer.gridContainer.background.fill = am4core.color("#000000");
-				valueAxis2.renderer.gridContainer.background.fillOpacity = 0.05;
-				
-				var volumeSeries = chart.series.push(new am4charts.StepLineSeries());
-				volumeSeries.fillOpacity = 1;
-				volumeSeries.fill = series1.stroke;
-				volumeSeries.stroke = series1.stroke;
-				volumeSeries.dataFields.dateX = "date";
-				volumeSeries.dataFields.valueY = "quantity";
-				volumeSeries.yAxis = valueAxis2;
-				volumeSeries.tooltipText = "Volume: {valueY.value}";
-				volumeSeries.name = "Series 2";
-				// volume should be summed
-				volumeSeries.groupFields.valueY = "sum";
-				volumeSeries.tooltip.label.fill = volumeSeries.stroke;
-				chart.cursor = new am4charts.XYCursor();
-				
-				var scrollbarX = new am4charts.XYChartScrollbar();
-				scrollbarX.series.push(series1);
-				scrollbarX.marginBottom = 20;
-				var sbSeries = scrollbarX.scrollbarChart.series.getIndex(0);
-				sbSeries.dataFields.valueYShow = undefined;
-				chart.scrollbarX = scrollbarX;
-				
-				// Add range selector
-				/*
-				var selector = new am4plugins_rangeSelector.DateAxisRangeSelector();
-				
-				selector.container = document.getElementById("controls");
-				selector.axis = dateAxis;
-
-				 */
-				
-				
-
 			})
-			
-			
-			/* ----------------------------------------------------------------------------------- */
-			//[Dashboard chart Javascript]
-
-//Project:	Crypto Admin - Responsive Admin Template
-
-
 			
 			
 			
@@ -559,7 +662,7 @@
 						<div class="btn-group">
 							<button class="waves-effect waves-light btn btn-light mb-5 dropdown-toggle" type="button" data-bs-toggle="dropdown">그래프 종류</button>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item line-one" onclick="graphType('one' ,'line')" href="#">라인</a> <a class="dropdown-item candle-one" onclick="graphType('one' ,'candle')" href="#">양초</a>
+								<a class="dropdown-item line-one" onclick="graphType('one' ,'line')" href="#">라인</a> <a class="dropdown-item candle-one" onclick="graphType('one' ,'candlestick')" href="#">양초</a>
 							</div>
 						</div>
 						<div class="btn-group">
@@ -577,7 +680,7 @@
 					</div>
 					<h4 class="box-title"></h4>
 					<div class="box-body box-one-body">
-						<div class="chart">
+						<div class="chart" id="chart-one">
 							<div></div>
 						</div>
 					</div>
@@ -590,7 +693,7 @@
 						<div class="btn-group">
 							<button class="waves-effect waves-light btn btn-light mb-5 dropdown-toggle" type="button" data-bs-toggle="dropdown">그래프 종류</button>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item line-two" onclick="graphType('two' ,'line')" href="#">라인</a> <a class="dropdown-item candle-two" onclick="graphType('two' ,'candle')" href="#">양초</a>
+								<a class="dropdown-item line-two" onclick="graphType('two' ,'line')" href="#">라인</a> <a class="dropdown-item candle-two" onclick="graphType('two' ,'candlestick')" href="#">양초</a>
 							</div>
 						</div>
 						<div class="btn-group">
@@ -609,7 +712,7 @@
 					</div>
 					<h4 class="box-title"></h4>
 					<div class="box-body box-two-body">
-						<div class="chart">
+						<div class="chart" id="chart-two">
 							<div></div>
 						</div>
 					</div>
@@ -622,7 +725,7 @@
 						<div class="btn-group">
 							<button class="waves-effect waves-light btn btn-light mb-5 dropdown-toggle" type="button" data-bs-toggle="dropdown">그래프 종류</button>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item line-three" onclick="graphType('three' ,'line')" href="#">라인</a> <a class="dropdown-item candle-three" onclick="graphType('three' ,'candle')" href="#">양초</a>
+								<a class="dropdown-item line-three" onclick="graphType('three' ,'line')" href="#">라인</a> <a class="dropdown-item candle-three" onclick="graphType('three' ,'candlestick')" href="#">양초</a>
 							</div>
 						</div>
 						<div class="btn-group">
@@ -641,7 +744,7 @@
 					</div>
 					<h4 class="box-title"></h4>
 					<div class="box-body box-three-body">
-						<div class="chart">
+						<div class="chart" id="chart-three">
 							<div></div>
 						</div>
 					</div>
@@ -649,13 +752,13 @@
 				
 				
 				
-					<div class="box">
+<!-- 					<div class="box">
 						<div class="box-body">
 							<div class="chart">
 								<div id="market-btc" style="height: 535px;"></div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				
 				
 					
@@ -723,7 +826,8 @@
 
 	<%-- 	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard8.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard8-chart.js"></script> --%>
-	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard18.js"></script>
+	
+	<%-- <script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard18.js"></script> --%>
 	<%-- 	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard18-chart.js"></script> --%>
 
 
@@ -746,13 +850,11 @@
 
 	<script src="https://www.amcharts.com/lib/4/core.js"></script>
 	<script src="https://www.amcharts.com/lib/4/charts.js"></script>
-	<script src="https://cdn.amcharts.com/lib/4/plugins/rangeSelector.js"></script>
-	<script src="https://cdn.amcharts.com/lib/4/themes/kelly.js"></script>
 	<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Web-Ticker-master/jquery.webticker.min.js"></script>
 	
 	
-	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard28.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard26.js"></script>
 <%--  	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard28-chart.js"></script>
 
  --%>

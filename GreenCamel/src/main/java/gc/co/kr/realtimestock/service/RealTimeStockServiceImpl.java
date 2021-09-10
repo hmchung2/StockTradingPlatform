@@ -32,7 +32,19 @@ public class RealTimeStockServiceImpl implements RealTimeStockService{
 	public List<Map<String, Object>> getInitValues(Map<String, Object> params) {		
 		List<Map<String,Object>> candleList = realTimeStockDAO.getInitValues(params);		
 		return candleList ;
+	}
+
+	@Override
+	public List<Map<String, Object>> getInitValuesLines(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		List<Map<String,Object>> lineList = realTimeStockDAO.getInitValuesLines(params);		
+		return lineList ;
+	}
+
+	@Override
+	public List<RealTimeStockVO> getRealTimeStockData(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		List<RealTimeStockVO> result = realTimeStockDAO.getRealTimeStockData(params);		
+		return result;
 	}	
-
-
 }

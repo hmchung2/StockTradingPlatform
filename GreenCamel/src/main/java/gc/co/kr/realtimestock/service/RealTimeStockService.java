@@ -12,5 +12,8 @@ public interface RealTimeStockService {
 	List<RealTimeStockVO> selectStockByTimeSymbols(Map<String,Object> params );
 
 	List<Map<String,Object>> getInitValues(Map<String,Object> params);
-
+	
+	List<Map<String,Object>> getInitValuesLines(Map<String,Object> params);
+	
+	List<RealTimeStockVO> getRealTimeStockData(Map<String,Object> params);
 }

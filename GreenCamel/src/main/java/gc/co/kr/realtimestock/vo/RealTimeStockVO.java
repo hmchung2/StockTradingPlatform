@@ -1,11 +1,11 @@
 package gc.co.kr.realtimestock.vo;
 
 public class RealTimeStockVO {
-	private int inorder;
+	private long inorder;
 	private String time;
 	private String symbol;
 	private float marketPrice;
-	private int shareOutstanding;
+	private long shareOutstanding;
 	private float avgDailyVolume10day;
 	private float avgDailyVolume3month;
 	private float dividendsPerShare;
@@ -17,23 +17,23 @@ public class RealTimeStockVO {
 	private float shortRatio;
 	private float epsForward;
 	private float bookValue;
-	private int sharesShort;
+	private long sharesShort;
 	private float dividendsYield;
 	private float marketChange;
 	private float marketChangePercent;
 	private float marketDayHigh;
 	private float marketDayLow;
 	private float marketVolume;
-	private int unixTime;
+	private long unixTime;
 		
 	public RealTimeStockVO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public int getInorder() {
+	public long getInorder() {
 		return inorder;
 	}
-	public void setInorder(int inorder) {
+	public void setInorder(long inorder) {
 		this.inorder = inorder;
 	}
 	public String getTime() {
@@ -54,10 +54,10 @@ public class RealTimeStockVO {
 	public void setMarketPrice(float marketPrice) {
 		this.marketPrice = marketPrice;
 	}
-	public int getShareOutstanding() {
+	public long getShareOutstanding() {
 		return shareOutstanding;
 	}
-	public void setShareOutstanding(int shareOutstanding) {
+	public void setShareOutstanding(long shareOutstanding) {
 		this.shareOutstanding = shareOutstanding;
 	}
 	public float getAvgDailyVolume10day() {
@@ -126,10 +126,10 @@ public class RealTimeStockVO {
 	public void setBookValue(float bookValue) {
 		this.bookValue = bookValue;
 	}
-	public int getSharesShort() {
+	public long getSharesShort() {
 		return sharesShort;
 	}
-	public void setSharesShort(int sharesShort) {
+	public void setSharesShort(long sharesShort) {
 		this.sharesShort = sharesShort;
 	}
 	public float getDividendsYield() {
@@ -168,10 +168,10 @@ public class RealTimeStockVO {
 	public void setMarketVolume(float marketVolume) {
 		this.marketVolume = marketVolume;
 	}
-	public int getUnixTime() {
+	public long getUnixTime() {
 		return unixTime;
 	}
-	public void setUnixTime(int unixTime) {
+	public void setUnixTime(long unixTime) {
 		this.unixTime = unixTime;
 	}
 	@Override

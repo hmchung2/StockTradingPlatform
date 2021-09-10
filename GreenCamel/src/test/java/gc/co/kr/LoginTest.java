@@ -103,18 +103,33 @@ public class LoginTest {
 			System.out.println(r);
 		}		
 	}
-	
+	@Ignore
 	@Test
 	public void testGetInitValues() throws Exception{
 		Map<String, Object> params = new HashMap<String,Object>();
 		params.put("fullTime", 1630460051);
 		params.put("interval", 30);
-		List<String> symbolList = Arrays.asList( "AAPL,HD".split(","));
+		String symbolList = "AAPL";
 		params.put("symbolList", symbolList);
 		List<Map<String,Object>> list = realtimestockDAO.getInitValues(params);
 		for(Map<String, Object> m : list) {
 			System.out.println( Float.parseFloat(String.valueOf( m.get("max_value"))) );
 		}				
-	}	
+	}
+	
+	@Test
+	public void testGetReals() throws Exception{
+		Map<String, Object> params = new HashMap<String , Object>();
+		
+		params.put("startTime" , 1631200787);
+		params.put("endTime", 1631220787);		
+		params.put("symbol", "AAPL");
+		List<RealTimeStockVO> realTimeData  = realtimestockService.getRealTimeStockData(params);
+		for(RealTimeStockVO r : realTimeData ) {
+			System.out.println(r);
+		}
+		
+	}
+	
 	
 }

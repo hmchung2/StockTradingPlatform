@@ -34,24 +34,33 @@
 		<id column="symbol" property="symbol"/>
 		<id column="min_created_value" property="min_created_value"/>
 		<id column="max_created_value" property="max_created_value"/>
+		<id column="max_vol" property="max_vol"/>
+		<id column="avg_price" property="avg_price"/>
 	</resultMap>
 	
 	
+	
+	
+	
 	<select id="getInitValues" resultMap="initValues" parameterType="hashMap">
-	with extracted as (select symbol, bid, ask, market_price,  unix_time from gc_realtime_stock where unix_time &gt;= #{fullTime} and symbol in
-		<foreach collection="symbolList" item="arr" open="(" close=")" separator=",">
-			#{arr}
-		</foreach>
-		 ) 
-		select l.*, j.market_price as max_created_value from extracted j  inner join ( 
+		with extracted as (select symbol, bid, ask, market_price,  unix_time , market_volume from gc_realtime_stock where unix_time between #{startTime} and #{endTime}   and symbol = #{symbolList})
+		select l.*, j.market_price as max_created_value from extracted j  inner join (
 		select k.* ,  p.market_price as min_created_value from extracted p   inner join 
-		(select max(ask) max_value , min(bid) min_value , min(unix_time) min_created,  max(unix_time) max_created , grp_id , symbol  from(
-		select symbol, market_price,  bid, ask,  unix_time,  #{interval} * trunc( unix_time / #{interval}  ) as grp_id from extracted ) group by grp_id , symbol   order by grp_id ) k
+		(select trunc(avg(market_price),2) avg_price, max(market_volume) max_vol , max(ask) max_value , min(bid) min_value , min(unix_time) min_created,  max(unix_time) max_created , grp_id , symbol from(
+		select market_volume , symbol, market_price,  bid, ask,  unix_time,  #{interval}  * trunc( unix_time / #{interval}   )    as grp_id   from extracted ) group by grp_id , symbol order by grp_id ) k
 		on p.unix_time  = k.min_created and p.symbol = k.symbol) l on j.unix_time = l.max_created and j.symbol = l.symbol
-		order by grp_id		
+		order by grp_id
 	</select>
 	
-	
+	<select id="getInitValuesLines" resultMap="initValues" parameterType="hashMap">
+		with extracted as (select symbol, market_price,  unix_time , market_volume from gc_realtime_stock where unix_time between #{startTime} and #{endTime}  and symbol = #{symbolList})
+		select l.*, j.market_price as max_created_value from extracted j  inner join (
+		select k.* ,  p.market_price as min_created_value from extracted p   inner join 
+		(select trunc(avg(market_price),2) avg_price, max(market_volume) max_vol , max(market_price) max_value , min(market_price) min_value , min(unix_time) min_created,  max(unix_time) max_created , grp_id , symbol from(
+		select market_volume , symbol, market_price, unix_time,  #{interval}  * trunc( unix_time / #{interval}   )    as grp_id   from extracted ) group by grp_id , symbol order by grp_id ) k
+		on p.unix_time  = k.min_created and p.symbol = k.symbol) l on j.unix_time = l.max_created and j.symbol = l.symbol
+		order by grp_id
+	</select>
 	
 
 	<select id="selectByTimeRange" resultMap="realTimeStockMap" parameterType="hashMap">
@@ -71,5 +80,14 @@
 		</foreach>		
 		GROUP BY symbol ) order by inorder desc
 	</select>
+	
+	
+	<select id="getRealTimeStockData" resultMap="realTimeStockMap" parameterType="hashMap">
+		SELECT * from gc_realtime_stock where unix_time between #{startTime} and #{endTime}  and symbol = #{symbol}		
+	</select>
+	
+	
+	
+	
 	
 </mapper>
