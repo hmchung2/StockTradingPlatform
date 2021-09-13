@@ -21,6 +21,25 @@
 <link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/style.css">
 <link rel="stylesheet" href="${ pageContext.request.contextPath }/resources/dash/css/skin_color.css">
 <script type="text/javascript" src="${ pageContext.request.contextPath }/resources/js/jquery-3.6.0.min.js"></script>
+<style>
+.enlarged-btn {
+	height: 350px;
+	width: 100%;
+	background-color: white;
+}
+
+.remove-chart {
+	float: right;
+	
+	
+	
+}
+	
+
+
+</style>
+
+
 <script>
 /* 	
 	function getRealTimeData() {
@@ -46,109 +65,327 @@
 		})
 	}
  */
-
 		
+		xtime = ~~(Date. now() / 1000) - 1631215740  
+		
+		
+		maximumTicCounts = 500
 		allSymbols  = []
 		chartDict = {};
- 		dataDict = {}
-						
+ 		dataDict = {}						
 		clicked_box = "none";
 		box_counts = 0;		
 		realdata = {}
 		
+		init_tic = 60
+		init_tic_counts = 50;
+		
+		
+		linedataTic = 3;
+		lineGraphExtraSec = 20;
 		
 		
 		box_info = {}
 		box_info["one"] =  {"symbol" : null,
 				"type" : "candlestick",
-				"tic" : 1800,
-				"realtime-flag" : false,
-				"start_date": null,
+				"tic" : 60,
+				"start_date": (~~(Date. now() / 1000) - init_tic * init_tic_counts ) - xtime ,
 				"end_date" : null}
 		box_info["two"] =  {"symbol" : null,
 				"type" : "candlestick",
-				"tic" : 1800,
-				"realtime-flag" : false,
-				"start_date": null,
+				"tic" : 60,
+				"start_date": (~~(Date. now() / 1000) - init_tic * init_tic_counts ) - xtime ,
 				"end_date" : null}
 		box_info["three"] =  {"symbol" : null,
 				"type" : "candlestick",
-				"tic" : 1800,
-				"realtime-flag" : false,
-				"start_date": null,
+				"tic" : 60,
+				"start_date": (~~(Date. now() / 1000) - init_tic * init_tic_counts ) - xtime ,
 				"end_date" : null}		
+		
+		interval = {}
+		
+		interval["one"] = {}
+		interval["one"]["flag"] = false
+		
+		interval["two"] = {}
+		interval["two"]["flag"] = false
+		
+		interval["three"] = {}
+		interval["three"]["flag"] = false
+		
 		
 		if (localStorage.getItem("allSymbols") != null
 				&& localStorage.getItem("allSymbols") != "") {
 			allSymbols = localStorage.getItem("allSymbols").split(",")
 		}			
-	
-		var oneInterval;
-		oneIntervalFlag = false
-		var twoInterval;
-		twoIntervalFlag = false;
-		var threeInterval;
-		threeInterval = false;
 		
-		function startIntervalOne(  symbol , tic , type  ){	
-			if(oneIntervalFlag){
-				clearInterval(oneInterval)
+		function instantGratification( fn, delay ) {
+		    fn();
+		    setInterval( fn, delay );
+		}
+		
+					
+	
+		function start(box){
+			$('#modal-center-dates').modal('show');						
+			clicked_box = box;				
+		}
+		
+		function checkTradingHour(){
+			let newyorktime = new Date( (~~(Date. now() / 1000)  - xtime) * 1000   ).toLocaleString('en-US', { timeZone: 'America/New_York' });
+			let newyorkDay = new Date(newyorktime).getDay();
+			if(newyorkDay == 6 || newyorkDay == 0){
+				return false;
 			}
-			if( type == "candlestick"){
-				console.log("candle real time data started")
-				oneInterval = setInterval(function(){
-					$.ajax({type : 'get',
-			      		url : "${pageContext.request.contextPath }/ajax/getRealTimeStock.json",
-			      		data : {interval : tic,
-			      				symbol : symbol,
-			      				startTime : 1631200787,  // ~~(Date. now() / 1000) - tic,
-			      				endTime :   1631300887  // ~~(Date. now() / 1000) 
-			      		},
-			      		contentType : "application/x-www-form-urlencoded;charset=ISO-8859-15",
-			      		datatype : 'json',
-			      		success : function(result) {	      			
-			      			console.log("one real time success")
-			      			
-			      			
-			      			dataDict[box_info["one"]["symbol"]].push(
-			      					{
-			      						x : new Date(parseInt(result.unixTime) * 1000),  
-			   							y : [result.firstPrice, 
-			   								result.maxPrice,
-			   								result.minPrice,
-			   								result.lastPrice]	
-			      						}					      			
-			      			)
-			      			if(dataDict[box_info["one"]["symbol"]].length > 500){
-			      				console.log("over 500 data deleting")
-			      				for (var i = dataDict[box_info["one"]["symbol"]].length  - 1; i >= 0; i--) {
-									  // remove element if index is odd
-								  if (i % 2 == 1)
-									  dataDict[box_info["one"]["symbol"]].splice(i, 1);
-								}	
-			      			}
-			      			chartDict[box_info["one"]["symbol"]].updateSeries([{
-			      				data: dataDict[box_info["one"]["symbol"]]
-					       	}]) 						       
-			      		},
-			      		error : function() {
-			      			console.log("error")
-			      		}
-			      	})					
-				}, 10 * 1000 ) //tic * 1000				
-			}else if( type == "line"){
-				oneInterval = setInterval(function(){
-					console.log("line graph real time starting")										
-					chartDict[box_info["one"]["symbol"]].addData(
-							{ date: new Date(1631300887    * 1000 ), 
-  				 				price: 150,  
-  				 				quantity: 300 },
-					         1);					
-				}, 3000)								
-			}				
+			let newyorkHour = new Date(newyorktime).getHour();
+			let newyorkMin = new Date(newyorktime).getMinutes();
+			if(newyorkHour <=  9 ){
+				if(neyorkHour <= 30){
+					return false;
+				}
+			}
+			if(newyorkHour >= 4){
+				return false;
+			}			
+			return true;
+		}
+		
+		//tic('three' , 10  )
+		function tic(box , sec){
+			box_info[box]["tic"] = sec;
+			box_info[box]["start_date"] =  (~~(Date. now() / 1000) - sec * init_tic_counts ) - xtime
+			if(box_info[box]["type"] == "candlestick" ){
+				if(interval[box]["flag"]){
+					clearInterval(interval[box]["func"])
+					interval[box]['flag'] = false;
+				}
+				symbol = box_info[box]["symbol"];
+				delete chartDict[symbol]
+				delete dataDict[symbol] 
+				
+				var rchartId = "chart_"  +   symbol ;						
+				
+				let rchartDiv = document.querySelector("#" + rchartId)
+				
+				let rchartBody = document.querySelector(".box-" + box + "-body .chart .chart-row")
+				rchartBody.removeChild(rchartDiv )										
+				
+				getinitdata(  box , symbol );
+			}
+		}
+	
+		function numberWithCommas(x) {
+		    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		}
 		
 			
+		function printRealData(symbol , box , result){
+			$("#box-" + box + " .symbol").html(result.symbol);
+			//$("#box-" + box + " .marketPrice").html(result.marketPrice);
+		  	var thisval= parseFloat($("#box-" + box + " .marketPrice").html());
+			var thisval2 = parseFloat(result.marketPrice);
+			$("#box-" + box + " .marketPrice").css("color" , "red")
+		  	$({ val : parseFloat($("#box-" + box + " .marketPrice").text()) }).animate({ val : parseFloat(result.marketPrice)  }, {
+			   duration: 2000,
+			  	step: function() {
+			  		
+			    var num = numberWithCommas(this.val.toFixed(2)  );
+			    $("#box-" + box + " .marketPrice").html(num);
+					
+			  	},
+			  	complete: function() {
+			  		
+			    var num = numberWithCommas(this.val.toFixed(2) );
+			    $("#box-" + box + " .marketPrice").html(num);
+			    $("#box-" + box + " .marketPrice").css("color" , "black")
+			  }
+			});
+		  
+		
+			
+			
+			$("#box-" + box + " .marketChangePercent").html(result.marketChangePercent);
+			$("#box-" + box + " .marketVolume").html(result.marketVolume);
+			$("#box-" + box + " .bid").html(result.bid + "/" + result.bidSize );
+			$("#box-" + box + " .ask").html(result.ask + "/" + result.askSize );
+			$("#box-" + box + " .dividendsYield").html(result.dividendsYield);
+			$("#box-" + box + " .floatingShares").html(result.floatingShares);
+			$("#box-" + box + " .shortRatio").html(result.shortRatio);
+			$("#box-" + box + " .shareOutstanding").html(result.shareOutstanding);
+			$("#box-" + box + " .epsForward").html(result.epsForward);			
+		}
+
+		
+		
+		function candlefirstrun( symbol , tic , type  , box){
+			$.ajax({type : 'get',
+	      		url : "${pageContext.request.contextPath }/ajax/getRealTimeStock.json",
+	      		data : {interval : tic,
+	      				symbol : symbol,
+	      				startTime :  ~~(Date. now() / 1000) - tic - xtime,  // ~~(Date. now() / 1000) - tic,
+	      				endTime :   ~~(Date. now() / 1000)  - xtime  // ~~(Date. now() / 1000) 
+	      		},
+	      		contentType : "application/x-www-form-urlencoded;charset=ISO-8859-15",
+	      		datatype : 'json',
+	      		success : function(result) {	      			
+	      			console.log("one real time success")
+
+	      			realdata[box] = result
+	      			
+	      			dataDict[box_info[box]["symbol"]].push(
+	      					{
+	      						x : new Date(parseInt(result.unixTime) * 1000),  
+	   							y : [result.firstPrice, 
+	   								result.maxPrice,
+	   								result.minPrice,
+	   								result.lastPrice]	
+	      						}					      			
+	      			)
+	      			// check maximumTicCounts 
+	      			if(dataDict[box_info[box]["symbol"]].length > maximumTicCounts ){
+	      				console.log("over 500 data deleting")
+	      				for (var i = dataDict[box_info[box]["symbol"]].length  - 1; i >= 0; i--) {
+							  // remove element if index is odd
+						  if (i % 2 == 1)
+							  dataDict[box_info[box]["symbol"]].splice(i, 1);
+						}	
+	      			}
+	      			chartDict[box_info[box]["symbol"]].updateSeries([{
+	      				data: dataDict[box_info[box]["symbol"]]
+			       	}])
+			       	
+			       	printRealData(symbol , box , result)				       	
+	      		},
+	      		error : function() {
+	      			console.log("error")
+	      			}
+				})
+				
+		}
+			
+			
+			
+			function linefirstrun(symbol , tic , type  , box){
+				console.log("line graph real time starting")
+				$.ajax({type : 'get',
+		      		url : "${pageContext.request.contextPath }/ajax/getRealTimeStock.json",
+		      		data : {interval :linedataTic , // box_info[box]['tic'],
+		      				symbol : symbol,
+		      				startTime :  ~~(Date. now() / 1000) - linedataTic  - xtime - lineGraphExtraSec, 
+		      				endTime :   ~~(Date. now() / 1000)  - xtime  
+		      		},
+		      		contentType : "application/x-www-form-urlencoded;charset=ISO-8859-15",
+		      		datatype : 'json',
+		      		success : function(result) {	      			
+		      			console.log("one real time success")
+		      			realdata[box] = result
+		      			chartDict[box_info[box]["symbol"]].addData(
+								{ date:  new Date( (~~(Date. now() / 1000)  - xtime)  * 1000  )   ,  //parseInt(result.unixTime) * 1000) 
+	  				 				price: result.marketPrice ,  
+	  				 				quantity: result.marketVolume },
+						         1);
+		      			//chartDict[box_info[box]["symbol"]].series.removeIndex(0);
+		      			
+		      			printRealData(symbol , box , result)
+		      									       
+		      		},
+		      		error : function() {
+		      			console.log("error")
+		      		}
+		      	})												
+			}
+
+	
+		function startIntervalOne(  symbol , tic , type  , box ){
+			if(checkTradingHour){			
+				if(interval[box]["flag"]){
+					console.log("clearing previous interval")
+					clearInterval(interval[box]["func"])				
+				}						
+				if( type == "candlestick"){
+					console.log("candle real time data started")
+					interval[box]["func"] = setInterval(function(){
+						$.ajax({type : 'get',
+				      		url : "${pageContext.request.contextPath }/ajax/getRealTimeStock.json",
+				      		data : {interval : tic,
+				      				symbol : symbol,
+				      				startTime :  ~~(Date. now() / 1000) - tic - xtime,  // ~~(Date. now() / 1000) - tic,
+				      				endTime :   ~~(Date. now() / 1000)  - xtime  // ~~(Date. now() / 1000) 
+				      		},
+				      		contentType : "application/x-www-form-urlencoded;charset=ISO-8859-15",
+				      		datatype : 'json',
+				      		success : function(result) {	      			
+				      			console.log("one real time success")
+
+				      			realdata[box] = result
+				      			
+				      			dataDict[box_info[box]["symbol"]].push(
+				      					{
+				      						x : new Date(parseInt(result.unixTime) * 1000),  
+				   							y : [result.firstPrice, 
+				   								result.maxPrice,
+				   								result.minPrice,
+				   								result.lastPrice]	
+				      						}					      			
+				      			)
+				      			// check maximumTicCounts 
+				      			if(dataDict[box_info[box]["symbol"]].length > maximumTicCounts ){
+				      				console.log("over 500 data deleting")
+				      				for (var i = dataDict[box_info[box]["symbol"]].length  - 1; i >= 0; i--) {
+										  // remove element if index is odd
+									  if (i % 2 == 1)
+										  dataDict[box_info[box]["symbol"]].splice(i, 1);
+									}	
+				      			}
+				      			chartDict[box_info[box]["symbol"]].updateSeries([{
+				      				data: dataDict[box_info[box]["symbol"]]
+						       	}])
+						       	
+						       	printRealData(symbol , box , result)				       	
+				      		},
+				      		error : function() {
+				      			console.log("error")
+				      		}
+				      	})					
+					}, tic * 1000 ) 
+					candlefirstrun( symbol , tic , type  , box );
+				}else if( type == "line"){
+					interval[box]["func"] = setInterval(function(){
+						console.log("line graph real time starting")
+						$.ajax({type : 'get',
+				      		url : "${pageContext.request.contextPath }/ajax/getRealTimeStock.json",
+				      		data : {interval :linedataTic , // box_info[box]['tic'],
+				      				symbol : symbol,
+				      				startTime :  ~~(Date. now() / 1000) - linedataTic  - xtime - lineGraphExtraSec, 
+				      				endTime :   ~~(Date. now() / 1000)  - xtime  
+				      		},
+				      		contentType : "application/x-www-form-urlencoded;charset=ISO-8859-15",
+				      		datatype : 'json',
+				      		success : function(result) {	      			
+				      			console.log("one real time success")
+				      			realdata[box] = result
+				      			chartDict[box_info[box]["symbol"]].addData(
+										{ date:  new Date( (~~(Date. now() / 1000)  - xtime)  * 1000  )   ,  //parseInt(result.unixTime) * 1000) 
+			  				 				price: result.marketPrice ,  
+			  				 				quantity: result.marketVolume },
+								         1);
+				      			//chartDict[box_info[box]["symbol"]].series.removeIndex(0);
+				      			
+				      			printRealData(symbol , box , result)
+				      									       
+				      		},
+				      		error : function() {
+				      			console.log("error")
+				      		}
+				      	})												
+					}, linedataTic * 1000)				// tic * 1000 		
+					linefirstrun(symbol , tic , type  , box)
+				}
+				interval[box]["flag"] = true;
+			}
+		}
+		
+	
 			
 		
 		function getinitdata( box , symbol ){
@@ -157,15 +394,13 @@
 			delete chartDict[symbol];
 			delete dataDict[symbol];
 		
-			console.log("symbol : " + symbol)
-			console.log("box : " + box)
-			console.log("tic : " +   box_info[box]['tic'])
+			
 			$.ajax({type : 'get',
-	      		url : "${pageContext.request.contextPath }/ajax/getInitStockValues.json",
+	      		url : "${pageContext.request.contextPath }/ajax/getInitStockValuesLines.json",
 	      		data : {interval : box_info[box]['tic'],
 	      				symbols : symbol,
-	      				startTime : 1631200787,
-	      				endTime :   1631220787
+	      				startTime : box_info[box]["start_date"],
+	      				endTime :   ~~(Date. now() / 1000)  - xtime
 	      		},
 	      		contentType : "application/x-www-form-urlencoded;charset=ISO-8859-15",
 	      		datatype : 'json',
@@ -189,13 +424,18 @@
 					let chartId = "chart_" +  symbol																																			
 					let chartDiv = document.createElement("div");									
 					chartDiv.id = chartId									
-					let chartBody = document.querySelector(".box-" + box + "-body .chart" )
-					chartBody.appendChild(chartDiv);																																		
-									
+					chartDiv.classList.add("col-xl-8");
+					chartDiv.classList.add("col-12");					
+					let chartBody = document.querySelector(".box-" + box + "-body .chart .chart-row" );					
+					chartBody.appendChild(chartDiv);
+					
+					$("#box-" + box  +" .hide-toggle" ).show()
+					
+
 					box_info[box]['symbol'] =  symbol;
 					options = {
 							chart : {
-								height : 350,
+								height : 550,
 								type : 'candlestick',
 							},
 							series : [ {
@@ -205,25 +445,32 @@
 								text : 'CandleStick Chart',
 								align : 'left'
 							},
-							xaxis : {
-								type : 'datetime'
+							xaxis : {                          //xaxis : {type : 'datetime'},   <---- default
+								  type: 'category',
+								  labels: {
+								    formatter: function(val) {
+								      return dayjs(val).format('MMM DD HH:mm')          
+								    }
+								  }
 							},
 							yaxis : {
 								tooltip : {
 									enabled : true
 								}
 							}
-						}
+						}		
+					
+					
 					chart = new ApexCharts(document.querySelector("#chart_" + symbol  ),options);
 					chart.render();
 					chartDict[symbol] =  chart;
 					/* chart.updateSeries([ {
 						data : data
 					}]) */
-					
-				startIntervalOne(symbol , box_info[box]['tic'] ,  "candlestick"); 
-				oneIntervalFlag = true;
-					
+				//-------------------------------------------------staring realtime -------------------------------------------------	
+				startIntervalOne(symbol , box_info[box]['tic'] ,  "candlestick" , box); 
+				
+				//--------------------------------------------------------------------------------------------------					
 										      			
 	      		},
 	      		error : function() {
@@ -238,40 +485,70 @@
 				let chartbox = document.querySelector("#chartbox");				
 			}
 		
+			var chartReg = {};
+			function createChart(chartdiv, charttype) {
+			  // Check if the chart instance exists
+			   maybeDisposeChart(chartdiv);
+
+			  // Create new chart
+			   chartReg[chartdiv] = am4core.create(chartdiv, charttype);
+			   return chartReg[chartdiv];
+			}
+
+			function maybeDisposeChart(chartdiv) {
+			  if (chartReg[chartdiv]) {
+			    chartReg[chartdiv].dispose();
+			    delete chartReg[chartdiv];
+			  }
+			}
+			
 		
 			function getinitdataLine(box, symbol){
-					let data = [];
+					let data = [];															
 					delete chartDict[symbol];
 					delete dataDict[symbol];					
 					box_info[box]['type'] = "line"
+					
+					
 					let chartId = "linechart_" +  symbol
 					let chartDiv = document.createElement("div");									
 					chartDiv.id = chartId
+					chartDiv.classList.add("col-xl-8");
+					chartDiv.classList.add("col-12");
+					
 					chartDiv.classList.add("h-550");
-					let chartBody = document.querySelector(".box-" + box + "-body .chart" )
+					
+					
+					let chartBody = document.querySelector(".box-" + box + "-body .chart .chart-row" );		
 					chartBody.appendChild(chartDiv);	
+					
+					$("#box-" + box  +" .hide-toggle" ).show()
+					
+					
 					am4core.useTheme(am4themes_animated);					
-					var chart = am4core.create("linechart_" +  symbol, am4charts.XYChart);
+					var chart = createChart("linechart_" +  symbol, am4charts.XYChart)
+					
+					box_info[box]['symbol'] =  symbol;
 					
 					
 					chart.padding(0, 15, 0, 15);
 					chart.colors.step = 3;
 					$.ajax({type : 'get',
 			      		url : "${pageContext.request.contextPath }/ajax/getInitStockValuesLines.json",
-			      		data : {interval : box_info[box]['tic'],
-			      				symbols : symbol,
-			      				startTime : 1631200787,
-			      				endTime :   1631220787
+			      		data : {interval :  linedataTic ,  //box_info[box]['tic']
+			      				symbols : symbol,			      				            
+			      				startTime :  (~~(Date. now() / 1000) - (linedataTic * init_tic_counts)   ) - xtime,   //(~~(Date. now() / 1000) - (linedataTic * init_tic_counts)   ) - xtime,  // box_info[box]['tic'] 
+			      				endTime :   ~~(Date. now() / 1000)  - xtime
 			      		},
 			      		contentType : "application/x-www-form-urlencoded;charset=ISO-8859-15",
 			      		datatype : 'json',
 			      		success : function(result){	      			
 			      			console.log("success")	      			
-			      			for(let i in result){
+			      			for(let i  = 0 ;  i <  result.length   ; i++ ){
 			      				currentData = result[i]	    
-			  				 	data.push({ date: new Date( parseInt(currentData.grp_id) * 1000 ), 
+			  				 	data.push({ date: new Date( parseInt(currentData.grp_id)  * 1000 ), 
 			  				 				price: currentData.avg_price,  
-			  				 				quantity: currentData.max_vol } );			      				
+			  				 				quantity: currentData.max_vol});			      				
 			      				}
 			      			var interfaceColors = new am4core.InterfaceColorSet();
 			      			chart.data = data;
@@ -317,6 +594,8 @@
 
 
 							var series = chart.series.push(new am4charts.LineSeries());
+							
+							
 							series.dataFields.dateX = "date";
 							series.dataFields.valueY = "price";
 							series.tooltipText = "{valueY.value}";
@@ -348,22 +627,17 @@
 							series2.yAxis = valueAxis2;
 							series2.tooltipText = "{valueY.value}";
 							series2.name = "Series 2";
-
+							
+							
 							chart.cursor = new am4charts.XYCursor();
 							chart.cursor.xAxis = dateAxis;
-
+							
 							var scrollbarX = new am4charts.XYChartScrollbar();
 							scrollbarX.series.push(series);
 							scrollbarX.marginBottom = 20;
-							chart.scrollbarX = scrollbarX;
+							chart.scrollbarX = scrollbarX;														
+							series.stroke = am4core.color("#ff0000"); // 
 							chartDict[symbol] = chart
-							
-							
-							
-							
-							chart.events.on("datavalidated", function () {
-							    dateAxis.zoom({ start: 1 / 15, end: 1.2 }, false, true);
-							});
 							
 							dateAxis.interpolationDuration = 500;
 							dateAxis.rangeChangeDuration = 500;
@@ -374,16 +648,28 @@
 							    dateAxis.zoom({ start: 1 / 15, end: 1.2 }, false, true);
 							});
 							
+						
+							series2.stroke = am4core.color("#ff0000");
+							series2.heatRules.push({
+								  "target": series2.columns.template,
+								  "property": "fill",
+								  "min": am4core.color("#F5DBCB"),
+								  "max": am4core.color("#ED7B84"),
+								  "dataField": "valueY"
+								});
 							
 							
 							
-							startIntervalOne(symbol , box_info[box]['tic'] ,  "line") 
+							
+							// -----------------------------------------starting realtime-------------------------------------------------
+							startIntervalOne(symbol , box_info[box]['tic'] ,  "line" , box) 
 							oneIntervalFlag = true;
+							//--------------------------------------------------------------------------------------------------
 							
 							series.fillOpacity = 1;
 							var gradient = new am4core.LinearGradient();
-							gradient.addColor(chart.colors.getIndex(0), 0.2);
-							gradient.addColor(chart.colors.getIndex(0), 0);
+							gradient.addColor(am4core.color("red"), 0.2);
+							gradient.addColor(am4core.color("red"), 0);
 							series.fill = gradient;
 
 							// this makes date axis labels to fade out
@@ -418,13 +704,15 @@
 							var bullet = series.createChild(am4charts.CircleBullet);
 							bullet.circle.radius = 5;
 							bullet.fillOpacity = 1;
-							bullet.fill = chart.colors.getIndex(0);
+							bullet.fill = am4core.color("red");
 							bullet.isMeasured = false;
 
 							series.events.on("validated", function() {
 							    bullet.moveTo(series.dataItems.last.point);
 							    bullet.validatePosition();
 							});
+							
+						
 							
 			      			},
 			      		error : function() {
@@ -435,52 +723,202 @@
 				
 			function graphType(box , type){
 				console.log("graphType : " + box + " : " + type)
-				if(type == box_info[box]["type"]  ){
-					console.log("already the same type")
-				}else{
-					current_symbol = box_info[box]["symbol"]
+				box_info[box]["type"] = type
+								
+				current_symbol = box_info[box]["symbol"]
+				if(current_symbol != null){
 					if(type == "line"){						
-						$("#chart-" + box).remove("#chart_" +  current_symbol  );
+						$("#chart-" + box).remove("#chart_" +  current_symbol );
 						var previousChart = document.getElementById("chart_" +  current_symbol);
 						var parentDiv = previousChart.parentNode;
 						parentDiv.removeChild(previousChart);						
-						box_info[box]['type'] = "line"
-						getinitdataLine( box , current_symbol )
-						
+						box_info[box]['type'] = "line"									
+						getinitdataLine( box , current_symbol);																		
 					}else if(type == "candlestick"){
 						$("#chart-" + box).remove("#chart_" +  current_symbol);
 						var previousChart = document.getElementById("linechart_" +  current_symbol);
 						var parentDiv = previousChart.parentNode;
 						parentDiv.removeChild(previousChart);
 						box_info[box]['type'] = "candle"
-						getinitdata( box , current_symbol  )
+						getinitdata( box , current_symbol)
 					}
-				}	
+				}						
 			}
 			
 
+			
+			
 			
 		
 		$(document).ready(function() {
 					$("#box-one").hide()
 					$("#box-two").hide()
 					$("#box-three").hide()
+					$(".box-header").hide()
+					$(".hide-toggle").hide()					
 			
 					let fullMsg = '${msg}'
 					if (fullMsg != null && fullMsg != "") {
 						myAlarm(fullMsg)
 					}									
 					let chartbox = document.querySelector("#chartbox")
+					
 					$('#add-symbol').click(function(){
-						if (!allSymbols.includes($("#symbol-code").val() )) {							
-							var newSymbol = $("#symbol-code").val()																	
-							console.log( "newSymbol : " +   newSymbol)							
-							getinitdata(  clicked_box , newSymbol  );																							
+						if (!allSymbols.includes($("#symbol-code").val() )) {
+							var newSymbol = $("#symbol-code").val()	
+							if(interval[clicked_box]["flag"]){								
+								
+								previous_symbol = box_info[clicked_box]["symbol"]
+								
+								clearInterval(interval[clicked_box]["func"])
+								interval[clicked_box]['flag'] = false;
+								
+								
+								delete chartDict[previous_symbol ]
+								delete dataDict[previous_symbol ] 
+								allSymbols.pop(previous_symbol)
+								var rchartId = "chart_"  +   previous_symbol;						
+								if(box_info[clicked_box]["type"] == "line"){
+									rchartId = "line" + rchartId
+								}				
+								let rchartDiv = document.querySelector("#" + rchartId)								
+								let rchartBody = document.querySelector(".box-" + clicked_box+ "-body .chart .chart-row")
+								rchartBody.removeChild(rchartDiv );
+								if(box_info[clicked_box]["type"] == "line"){
+									getinitdataLine(  clicked_box , newSymbol  );
+								}else{
+									getinitdata(  clicked_box , newSymbol  );	
+								}
+								
+							}else{
+								$(".box-" + clicked_box + "-header").show();
+																								
+								console.log( "newSymbol : " +   newSymbol)
+								$('#modal-' +clicked_box ).removeClass('enlarged-btn');
+								$('#remove-chart-'+clicked_box).show()
+								if(box_info[clicked_box]["type"] == "candlestick" ){
+									getinitdata(  clicked_box , newSymbol  );	
+								}else if(box_info[clicked_box]["type"] == "line" ){								
+									getinitdataLine(clicked_box , newSymbol  )
+								}
+																						
+							}
+							allSymbols.push(newSymbol)
+							
 						} else {
 							myAlarm("warning:실패:이미 화면에 존재 합니다.");
 						}												
 					})
+					$(".attr").hover(
+				            function() {
+				                $(".attr").css("color","red");
+				            },
+				            function() {
+				                $(".attr").css("color","black");
+				            }
+				        );
+					
+					
+
+					
+	
+					$(".remove-chart").click(function(){
+						rbox = this.id.split("-")[2]
+						
+						clearInterval(interval[rbox]["func"])
+						
+						interval[rbox]['flag'] = false;
+						allSymbols.pop(box_info[rbox]["symbol"])
+						
+						delete chartDict[box_info[rbox]['symbol']]
+						delete dataDict[box_info[rbox]['symbol']]
+						var rchartId = "chart_"  +   box_info[rbox]["symbol"] ;						
+						if(box_info[rbox ] ['type'] == "line" ){
+							rchartId = "line" + rchartId
+						}
+						let rchartDiv = document.querySelector("#" + rchartId)						
+						let rchartBody = document.querySelector(".box-" + rbox + "-body .chart .chart-row")						
+						rchartBody.removeChild(rchartDiv );
+						
+						
+						
+						box_info[rbox] =  {"symbol" : null,
+							"type" : "candlestick",
+							"tic" : init_tic,
+							"start_date": (~~(Date. now() / 1000) - init_tic * init_tic_counts ) - xtime ,
+							"end_date" : null
+							}
+						//$("#remove-chart-" + rbox).hide()
+						$("#modal-" + rbox).addClass("enlarged-btn");
+						$("#box-" + rbox + " .hide-toggle").hide();
+						$(".box-" + rbox + ".box-header").hide()
+					})
+						
+					
+					$('#add-date').click(function(){
+						
+						valid = true;
+						$(".stock-time").each(function(){
+							console.log($(this).val())
+							
+							if( ! (/^\d+$/.test($(this).val() ) )  ) {
+								valid = false;
+								msg = "숫자만 입력 바랍니다."								
+								myAlarm("warning:에러:" + msg)								        
+							}   
+						})
+						
+						year = $("#stock-year").val()
+						month =$("#stock-month").val()
+						day = $("#stock-day").val()
+						hour = $("#stock-hour").val()
+						miniute = $("#stock-miniute").val()													
+						
+						if(valid){
+							
+							second_valid = true;
+							selected_time_str = year + "/" + month + "/" + day + "/ " + hour +":"+miniute+":00"
+							console.log(selected_time_str)
+							selected_time = (new Date(selected_time_str).getTime()/1000)
+							console.log(selected_time)
+							if(selected_time >  ~~(Date. now() / 1000) ){														
+								second_valid = false;
+								myAlarm("warning:에러:현재 시간 보다 과거를 선택 바랍니다.")								
+							}else if( ~~(Date. now() / 1000)  - selected_time > 31556952 * 2  ){
+								//현재 보다 2년 이상인지 확인
+								myAlarm("warning:warning:2년 넘는 시간에는 자동으로 틱이 하루로 변경 됩니다.")
+								box_info[clicked_box]["tic"] = 86400
+							}   
+							if(second_valid){
+								box_info[clicked_box]["start_date"] =  selected_time							
+								console.log("changed date  : " +  String(box_info[clicked_box]["start_date"]) ) 	
+								if(box_info[clicked_box]["type"] == "candlestick" ){
+									if(interval[clicked_box]["flag"]){
+										clearInterval(interval[clicked_box]["func"])
+										interval[clicked_box]['flag'] = false;
+									}
+									symbol = box_info[clicked_box]["symbol"];
+									delete chartDict[symbol]
+									delete dataDict[symbol] 
+									
+									var rchartId = "chart_"  +   symbol ;						
+									
+									let rchartDiv = document.querySelector("#" + rchartId)
+									
+									let rchartBody = document.querySelector(".box-" + clicked_box+ "-body .chart")
+									rchartBody.removeChild(rchartDiv )										
+									getinitdata(  clicked_box , symbol );
+								}
+							}	
+						}						
+					})
+					
+					
+							
+					
 				
+					
+					
 					
 					
 				$("#two-horizontal").click(function(){
@@ -566,7 +1004,7 @@
 </script>
 
 </head>
-<body class="hold-transition light-skin sidebar-mini theme-warning fixed">
+<body class="hold-transition light-skin sidebar-mini theme-primary fixed">
 	<div class="wrapper">
 		<div id="loader"></div>
 		<header class="main-header">
@@ -630,7 +1068,21 @@
 						<div class="dropdown">
 							<button class="waves-effect waves-light btn btn-light mb-5 dropdown-toggle" type="button" data-bs-toggle="dropdown">레이아웃</button>
 							<div class="dropdown-menu dropdown-grid">
-								<a id="one" class="dropdown-item" href="#"> <span class="icon ti-layout-width-full"></span> <span class="title"></span></a> <a id="two-vertical" class="dropdown-item" href="#"> <span class="icon ti-layout-column2-alt"></span> <span class="title"></span></a> <a id="three-vertical" class="dropdown-item" href="#"> <span class="icon ti-layout-column3-alt"></span> <span class="title"></span></a> <a id="two-horizontal" class="dropdown-item" href="#"> <span class="icon ti-layout-column2-alt fa-rotate-90"></span> <span class="title"></span></a> <a id="three-horizontal" class="dropdown-item" href="#"> <span class="icon ti-layout-column3-alt fa-rotate-90"></span> <span class="title"></span></a>
+								<a id="one" class="dropdown-item" href="#">
+									<span class="icon ti-layout-width-full"></span> <span class="title"></span>
+								</a>
+								<a id="two-vertical" class="dropdown-item" href="#">
+									<span class="icon ti-layout-column2"></span> <span class="title"></span>
+								</a>
+								<a id="three-vertical" class="dropdown-item" href="#">
+									<span class="icon ti-layout-column3"></span> <span class="title"></span>
+								</a>
+								<a id="two-horizontal" class="dropdown-item" href="#">
+									<span class="icon ti-layout-column2 fa-rotate-90"></span> <span class="title"></span>
+								</a>
+								<a id="three-horizontal" class="dropdown-item" href="#">
+									<span class="icon ti-layout-column3 fa-rotate-90"></span> <span class="title"></span>
+								</a>
 							</div>
 						</div>
 					</div>
@@ -651,128 +1103,174 @@
 						<div class="col-md-4" id="sc-three"></div>
 						<div class="col-md-6" id="lc-one"></div>
 						<div class="col-md-6" id="lc-two"></div>
-					</div>				
+					</div>
 				</div>
 				<div hidden="true" id="e_chart_2" class="" style="height: 285px;"></div>
 				<div class="box" id="box-one">
 					<div class="box-header with-border box-one-header">
-						<button id="modal-one" type="button" class="waves-effect waves-light btn btn-light mb-5 add-symbol" data-bs-toggle="modal" data-bs-target="#modal-center" onclick="initData('one')">
-							종목<i class="mdi mdi-plus-box"></i>
-						</button>
 						<div class="btn-group">
 							<button class="waves-effect waves-light btn btn-light mb-5 dropdown-toggle" type="button" data-bs-toggle="dropdown">그래프 종류</button>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item line-one" onclick="graphType('one' ,'line')" href="#">라인</a> <a class="dropdown-item candle-one" onclick="graphType('one' ,'candlestick')" href="#">양초</a>
+								<a class="dropdown-item line-one" onclick="graphType('one' ,'line')" href="#">라인</a>
+								<a class="dropdown-item candle-one" onclick="graphType('one' ,'candlestick')" href="#">양초</a>
 							</div>
 						</div>
 						<div class="btn-group">
 							<button class="waves-effect waves-light btn btn-light mb-5  dropdown-toggle" type="button" data-bs-toggle="dropdown">틱</button>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item tic-one" onclick="tic('one' , 10  )" href="#">10초</a> <a class="dropdown-item tic-one" onclick="tic('one' , 30  )" href="#">30초</a> <a class="dropdown-item tic-one" onclick="tic('one' , 60  )" href="#">60초</a> <a class="dropdown-item tic-one" onclick="tic('one' , 300  )" href="#">5분</a> <a class="dropdown-item tic-one" onclick="tic('one' , 1800  )" href="#">30분</a> <a class="dropdown-item tic-one" onclick="tic('one' , 3600  )" href="#">1시간</a> <a class="dropdown-item tic-one" onclick="tic('one' , 10800  )" href="#">3시간</a> <a class="dropdown-item tic-one" onclick="tic('one' , 86400  )" href="#">하루</a>
+								<a class="dropdown-item tic-one" onclick="tic('one' , 10  )" href="#">10초</a>
+								<a class="dropdown-item tic-one" onclick="tic('one' , 30  )" href="#">30초</a>
+								<a class="dropdown-item tic-one" onclick="tic('one' , 60  )" href="#">60초</a>
+								<a class="dropdown-item tic-one" onclick="tic('one' , 300  )" href="#">5분</a>
+								<a class="dropdown-item tic-one" onclick="tic('one' , 1800  )" href="#">30분</a>
+								<a class="dropdown-item tic-one" onclick="tic('one' , 3600  )" href="#">1시간</a>
+								<a class="dropdown-item tic-one" onclick="tic('one' , 10800  )" href="#">3시간</a>
+								<a class="dropdown-item tic-one" onclick="tic('one' , 86400  )" href="#">하루</a>
 							</div>
 						</div>
 						<button type="button" class="waves-effect waves-light btn btn-light mb-5 start-one" onclick="start('one')">
-							실시간 출력 <i class="fa fa-play"></i>
-						</button>
-						<button type="button" class="waves-effect waves-light btn btn-light mb-5 stop-one" onclick="stop('one')">
-							고정 <i class="fa fa-stop"></i>
+							날짜 변경 <i class="fa fa-play"></i>
 						</button>
 					</div>
 					<h4 class="box-title"></h4>
 					<div class="box-body box-one-body">
 						<div class="chart" id="chart-one">
-							<div></div>
+							<button id="modal-one" type="button" class="enlarged-btn waves-effect waves-light btn btn-light mb-5 add-symbol" data-bs-toggle="modal" data-bs-target="#modal-center" onclick="initData('one')">
+								종목<i class="mdi mdi-plus-box"></i>
+							</button>
+							<div class="hide-toggle">
+								<button class="btn btn-danger btn-flat mb-5 btn-xs remove-chart" id="remove-chart-one">
+									<i class="fa fa-remove"></i>
+								</button>
+								<div class="row chart-row">
+									<div class="col-xl-4 col-12 currentInfoBox">
+										<jsp:include page="/resources/hts/liveinfo.jsp" />
+									</div>
+								</div>
+								<div class="row quick-buy">
+									<div class="box">
+										<jsp:include page="/resources/hts/quickbuysell.jsp" />
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class="box" id="box-two">
 					<div class="box-header with-border box-two-header">
-						<button id="modal-two" type="button" class="waves-effect waves-light btn btn-light mb-5 add-symbol" data-bs-toggle="modal" data-bs-target="#modal-center" onclick="initData('two')">
-							종목<i class="mdi mdi-plus-box"></i>
-						</button>
 						<div class="btn-group">
 							<button class="waves-effect waves-light btn btn-light mb-5 dropdown-toggle" type="button" data-bs-toggle="dropdown">그래프 종류</button>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item line-two" onclick="graphType('two' ,'line')" href="#">라인</a> <a class="dropdown-item candle-two" onclick="graphType('two' ,'candlestick')" href="#">양초</a>
+								<a class="dropdown-item line-two" onclick="graphType('two' ,'line')" href="#">라인</a>
+								<a class="dropdown-item candle-two" onclick="graphType('two' ,'candlestick')" href="#">양초</a>
 							</div>
 						</div>
 						<div class="btn-group">
 							<button class="waves-effect waves-light btn btn-light mb-5 dropdown-toggle" type="button" data-bs-toggle="dropdown">틱</button>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item tic-two" onclick="tic('two' , 10  )" href="#">10초</a> <a class="dropdown-item tic-two" onclick="tic('two' , 30  )" href="#">30초</a> <a class="dropdown-item tic-two" onclick="tic('two' , 60  )" href="#">60초</a> <a class="dropdown-item tic-two" onclick="tic('two' , 300  )" href="#">5분</a> <a class="dropdown-item tic-two" onclick="tic('two' , 1800  )" href="#">30분</a> <a class="dropdown-item tic-two" onclick="tic('two' , 3600  )" href="#">1시간</a> <a class="dropdown-item tic-two" onclick="tic('two' , 10800  )" href="#">3시간</a> <a class="dropdown-item tic-two" onclick="tic('two' , 86400  )" href="#">하루</a>
+								<a class="dropdown-item tic-two" onclick="tic('two' , 10  )" href="#">10초</a>
+								<a class="dropdown-item tic-two" onclick="tic('two' , 30  )" href="#">30초</a>
+								<a class="dropdown-item tic-two" onclick="tic('two' , 60  )" href="#">60초</a>
+								<a class="dropdown-item tic-two" onclick="tic('two' , 300  )" href="#">5분</a>
+								<a class="dropdown-item tic-two" onclick="tic('two' , 1800  )" href="#">30분</a>
+								<a class="dropdown-item tic-two" onclick="tic('two' , 3600  )" href="#">1시간</a>
+								<a class="dropdown-item tic-two" onclick="tic('two' , 10800  )" href="#">3시간</a>
+								<a class="dropdown-item tic-two" onclick="tic('two' , 86400  )" href="#">하루</a>
 							</div>
 						</div>
 						<button type="button" class="waves-effect waves-light btn btn-light mb-5 start-two" onclick="start('two')">
-							실시간 출력 <i class="fa fa-play"></i>
+							날짜 변경 <i class="fa fa-play"></i>
 						</button>
-						<button type="button" class="waves-effect waves-light btn btn-light mb-5 stop-two" onclick="stop('two')">
-							고정 <i class="fa fa-stop"></i>
-						</button>
-
 					</div>
 					<h4 class="box-title"></h4>
 					<div class="box-body box-two-body">
 						<div class="chart" id="chart-two">
-							<div></div>
+							<button id="modal-two" type="button" class="enlarged-btn waves-effect waves-light btn btn-light mb-5 add-symbol" data-bs-toggle="modal" data-bs-target="#modal-center" onclick="initData('two')">
+								종목<i class="mdi mdi-plus-box"></i>
+							</button>
+							<div class="hide-toggle">
+								<button class="btn btn-danger btn-flat mb-5 btn-xs remove-chart" id="remove-chart-two">
+									<i class="fa fa-remove"></i>
+								</button>
+								<div class="row chart-row">
+									<div class="col-xl-4 col-12 currentInfoBox">
+										<jsp:include page="/resources/hts/liveinfo.jsp" />
+									</div>
+								</div>
+								<div class="row quick-buy">
+									<div class="box">
+										<jsp:include page="/resources/hts/quickbuysell.jsp" />
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class="box" id="box-three">
 					<div class="box-header with-border box-three-header">
-						<button id="modal-three" type="button" class="waves-effect waves-light btn btn-light mb-5 add-symbol" data-bs-toggle="modal" data-bs-target="#modal-center" onclick="initData('three')">
-							종목<i class="mdi mdi-plus-box"></i>
-						</button>
 						<div class="btn-group">
 							<button class="waves-effect waves-light btn btn-light mb-5 dropdown-toggle" type="button" data-bs-toggle="dropdown">그래프 종류</button>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item line-three" onclick="graphType('three' ,'line')" href="#">라인</a> <a class="dropdown-item candle-three" onclick="graphType('three' ,'candlestick')" href="#">양초</a>
+								<a class="dropdown-item line-three" onclick="graphType('three' ,'line')" href="#">라인</a>
+								<a class="dropdown-item candle-three" onclick="graphType('three' ,'candlestick')" href="#">양초</a>
 							</div>
 						</div>
 						<div class="btn-group">
 							<button class="waves-effect waves-light btn btn-light mb-5 dropdown-toggle" type="button" data-bs-toggle="dropdown">틱</button>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item tic-three" onclick="tic('three' , 10  )" href="#">10초</a> <a class="dropdown-item tic-three" onclick="tic('three' , 30  )" href="#">30초</a> <a class="dropdown-item tic-three" onclick="tic('three' , 60  )" href="#">60초</a> <a class="dropdown-item tic-three" onclick="tic('three' , 300  )" href="#">5분</a> <a class="dropdown-item tic-three" onclick="tic('three' , 1800  )" href="#">30분</a> <a class="dropdown-item tic-three" onclick="tic('three' , 3600  )" href="#">1시간</a> <a class="dropdown-item tic-three" onclick="tic('three' , 10800  )" href="#">3시간</a> <a class="dropdown-item tic-three" onclick="tic('three' , 86400  )" href="#">하루</a>
+								<a class="dropdown-item tic-three" onclick="tic('three' , 10  )" href="#">10초</a>
+								<a class="dropdown-item tic-three" onclick="tic('three' , 30  )" href="#">30초</a>
+								<a class="dropdown-item tic-three" onclick="tic('three' , 60  )" href="#">60초</a>
+								<a class="dropdown-item tic-three" onclick="tic('three' , 300  )" href="#">5분</a>
+								<a class="dropdown-item tic-three" onclick="tic('three' , 1800  )" href="#">30분</a>
+								<a class="dropdown-item tic-three" onclick="tic('three' , 3600  )" href="#">1시간</a>
+								<a class="dropdown-item tic-three" onclick="tic('three' , 10800  )" href="#">3시간</a>
+								<a class="dropdown-item tic-three" onclick="tic('three' , 86400  )" href="#">하루</a>
 							</div>
 						</div>
 						<button type="button" class="waves-effect waves-light btn btn-light mb-5 start-three" onclick="start('three')">
-							실시간 출력 <i class="fa fa-play"></i>
+							날짜 변경 <i class="fa fa-play"></i>
 						</button>
-						<button type="button" class="waves-effect waves-light btn btn-light mb-5 stop-three" onclick="stop('three')">
-							고정 <i class="fa fa-stop"></i>
-						</button>
-
 					</div>
 					<h4 class="box-title"></h4>
 					<div class="box-body box-three-body">
 						<div class="chart" id="chart-three">
-							<div></div>
+							<button id="modal-three" type="button" class="enlarged-btn waves-effect waves-light btn btn-light mb-5 add-symbol" data-bs-toggle="modal" data-bs-target="#modal-center" onclick="initData('three')">
+								종목<i class="mdi mdi-plus-box"></i>
+							</button>
+							<div class="hide-toggle">
+								<button class="btn btn-danger btn-flat mb-5 btn-xs remove-chart" id="remove-chart-three">
+									<i class="fa fa-remove"></i>
+								</button>
+								<div class="row chart-row">
+									<div class="col-xl-4 col-12 currentInfoBox">
+										<jsp:include page="/resources/hts/liveinfo.jsp" />
+									</div>
+								</div>
+								<div class="row quick-buy">
+									<div class="box">
+										<jsp:include page="/resources/hts/quickbuysell.jsp" />
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-				
-				
-				
-<!-- 					<div class="box">
-						<div class="box-body">
-							<div class="chart">
-								<div id="market-btc" style="height: 535px;"></div>
-							</div>
-						</div>
-					</div> -->
-				
-				
-					
 			</section>
-
 		</div>
-
 	</div>
-	
+
+
+
+
+
 	<footer class="main-footer">
 		<jsp:include page="/resources/dash/include/footer.jsp" />
-		&copy; 2021 <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+		&copy; 2021
+		<a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>
+		. All Rights Reserved.
 	</footer>
-	
+
 	<aside class="control-sidebar">
 		<jsp:include page="/resources/dash/include/control-sidebar.jsp" />
 	</aside>
@@ -794,6 +1292,43 @@
 				<div class="modal-footer modal-footer-uniform">
 					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
 					<button type="button" id="add-symbol" data-bs-dismiss="modal" class="btn btn-primary float-end">확인</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- modal -->
+
+	<div class="modal center-modal fade" id="modal-center-dates" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">날짜 설정</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p>날짜 입력</p>
+					<div class="row">
+						<div class=".col-md-1">
+							<input class="stock-time mt-5" type="text" id="stock-year" placeholder="연 ex. 2021">
+						</div>
+						<div class=".col-md-1">
+							<input class="stock-time" type="text" id="stock-month" placeholder="월 ex. 09">
+						</div>
+						<div class=".col-md-1">
+							<input class="stock-time" type="text" id="stock-day" placeholder="일 ex. 05">
+						</div>
+						<div class=".col-md-1">
+							<input class="stock-time" type="text" id="stock-hour" placeholder="시 ex 15">
+						</div>
+						<div class=".col-md-1">
+							<input class="stock-time" type="text" id="stock-miniute" placeholder="분 ex 32">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer modal-footer-uniform">
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
+					<button type="button" id="add-date" data-bs-dismiss="modal" class="btn btn-primary float-end">확인</button>
 				</div>
 			</div>
 		</div>
@@ -826,7 +1361,7 @@
 
 	<%-- 	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard8.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard8-chart.js"></script> --%>
-	
+
 	<%-- <script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard18.js"></script> --%>
 	<%-- 	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard18-chart.js"></script> --%>
 
@@ -843,7 +1378,8 @@
 
 
 
-
+	<!-- removing empty dates -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.8.17/dayjs.min.js"></script>
 
 
 	<!-- line chart -->
@@ -852,10 +1388,10 @@
 	<script src="https://www.amcharts.com/lib/4/charts.js"></script>
 	<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/assets/vendor_components/Web-Ticker-master/jquery.webticker.min.js"></script>
-	
-	
+
+
 	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard26.js"></script>
-<%--  	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard28-chart.js"></script>
+	<%--  	<script src="${ pageContext.request.contextPath }/resources/dash/js/pages/dashboard28-chart.js"></script>
 
  --%>
 

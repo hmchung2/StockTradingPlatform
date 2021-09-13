@@ -55,8 +55,9 @@ public class MemberController {
 	}
 	
 	@GetMapping("/signout")
-	public String login(SessionStatus sessionStatus) {		
-		sessionStatus.setComplete();		
+	public String login(SessionStatus sessionStatus, HttpSession session) {		
+		sessionStatus.setComplete();
+		session.invalidate();
 		return "redirect:/";
 	}
 	

@@ -46,5 +46,12 @@ public class RealTimeStockServiceImpl implements RealTimeStockService{
 		// TODO Auto-generated method stub
 		List<RealTimeStockVO> result = realTimeStockDAO.getRealTimeStockData(params);		
 		return result;
+	}
+
+	@Override
+	public RealTimeStockVO getRealTimeStockDataLine(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		RealTimeStockVO result = realTimeStockDAO.getRealTimeStockDataLine(params);
+		return result;
 	}	
 }

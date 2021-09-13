@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="summarystock.SummaryStockDAO">
+
+	<resultMap type="stockSummaryVO" id="stockSummaryMap">
+		<result column="unix_time" property="unixTime"></result>
+	</resultMap>
+
+	<resultMap type="StockNameVO" id="stockNameMap">
+		<result column="long_name" property="longName"></result>	
+	</resultMap>
+
+	<select id="selectCurrentStockSummary" resultMap="stockSummaryMap" parameterType="java.util.List">
+		select x.*  from gc_summary_stock x  inner join(
+		select max(unix_time) as max , symbol from gc_summary_stock where symbol in		
+		<foreach collection="list" item="arr" open="(" close=")" separator=",">
+		 #{arr}
+		</foreach>			
+		 group by  symbol) y
+		on x.unix_time = y.max and x.symbol = y.symbol		
+	</select>
+	
+	
+	<select id="selectAllStockNames" resultMap="stockNameMap">
+		select * from gc_stock
+	</select>	
+</mapper>

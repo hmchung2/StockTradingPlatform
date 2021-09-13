@@ -52,6 +52,14 @@ public class RealTimeStockDAOImpl implements RealTimeStockDAO{
 		List<RealTimeStockVO> result = sqlSessionTemplate.selectList("realtimestock.RealTimeStockDAO.getRealTimeStockData" , params );		
 		return result ;
 	}
+
+	@Override
+	public RealTimeStockVO getRealTimeStockDataLine(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		List<RealTimeStockVO> resultList= sqlSessionTemplate.selectList("realtimestock.RealTimeStockDAO.getRealTimeStockData" , params );
+		RealTimeStockVO result =  resultList.get(resultList.size() - 1);		
+		return result;
+	}
 	
 	
 	

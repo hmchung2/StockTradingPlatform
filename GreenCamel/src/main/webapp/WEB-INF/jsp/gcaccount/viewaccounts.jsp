@@ -52,7 +52,7 @@
 </script>
 
 </head>
-<body class="hold-transition dark-skin sidebar-mini theme-warning fixed">
+<body class="hold-transition light-skin sidebar-mini theme-warning fixed">
 	<div class="wrapper">
 		<div id="loader"></div>
 		<header class="main-header">

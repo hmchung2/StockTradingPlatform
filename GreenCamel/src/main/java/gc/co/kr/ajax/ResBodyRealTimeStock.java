@@ -94,7 +94,7 @@ public class ResBodyRealTimeStock {
 		Map<String, Object> result = null;
 		Map<String, Object> params = new HashMap<String , Object>();
 		
-		int interval =  Integer.parseInt(request.getParameter("interval"));		
+		//int interval =  Integer.parseInt(request.getParameter("interval"));		
 		int startTime= Integer.parseInt(request.getParameter("startTime"));
 		int endTime = Integer.parseInt(request.getParameter("endTime"));		
 		String symbol  = request.getParameter("symbol");
@@ -123,10 +123,29 @@ public class ResBodyRealTimeStock {
 		result.put("minPrice", minPrice);
 		
 		
-		for(String key : result.keySet()) {
-			System.out.println("key : " + key );
-			System.out.println("value"  +   result.get(key)  );
-		}				
+					
 		return result;
-	}		
+	}
+	
+	
+	@RequestMapping("getRealTimeStockLine.json")
+	@ResponseBody
+	public RealTimeStockVO getRealTimeStockDataLine(HttpServletRequest request){
+		RealTimeStockVO result = null;
+		Map<String, Object> params = new HashMap<String , Object>();		
+				
+		int startTime= Integer.parseInt(request.getParameter("startTime"));
+		int endTime = Integer.parseInt(request.getParameter("endTime"));		
+		String symbol  = request.getParameter("symbol");
+		
+		params.put("startTime" , startTime);
+		params.put("endTime", endTime);		
+		params.put("symbol", symbol);
+		result  = service.getRealTimeStockDataLine(params);
+					
+		return result;
+	}
+	
+	
+	
 }

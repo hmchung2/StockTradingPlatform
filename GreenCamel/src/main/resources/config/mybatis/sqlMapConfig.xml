@@ -8,6 +8,8 @@
 		<typeAlias type="gc.co.kr.account.vo.AccountVO" alias="accountVO"/>
 		<typeAlias type="gc.co.kr.realtimestock.vo.RealTimeStockVO" alias="realTimeStockVO"/>
 		<typeAlias type="gc.co.kr.leagueAccount.LeagueAccountVO" alias="leagueAccountVO"/>
-		<typeAlias type="gc.co.kr.leagueAccount.LeagueFollowVO" alias="leagueFollowVO"/>
+		<typeAlias type="gc.co.kr.leagueAccount.LeagueFollowVO" alias="leagueFollowVO"/>		
+		<typeAlias type="gc.co.kr.stocksummary.vo.StockSummaryVO" alias="stockSummaryVO"/>
+		<typeAlias type="gc.co.kr.stocksummary.vo.StockNameVO" alias="stockNameVO"/>
 	</typeAliases>
 </configuration>

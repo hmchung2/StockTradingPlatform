@@ -1,6 +1,7 @@
 package gc.co.kr;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,10 @@ import gc.co.kr.member.vo.MemberVO;
 import gc.co.kr.realtimestock.dao.RealTimeStockDAO;
 import gc.co.kr.realtimestock.service.RealTimeStockService;
 import gc.co.kr.realtimestock.vo.RealTimeStockVO;
+import gc.co.kr.stocksummary.dao.StockSummaryDAO;
+import gc.co.kr.stocksummary.service.StockSummaryService;
+import gc.co.kr.stocksummary.vo.StockNameVO;
+import gc.co.kr.stocksummary.vo.StockSummaryVO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/config/spring/spring-mvc.xml"})
@@ -38,6 +43,12 @@ public class LoginTest {
 	
 	@Autowired
 	private RealTimeStockService realtimestockService;
+	
+	@Autowired
+	private StockSummaryDAO summarydao;
+	
+	@Autowired
+	private StockSummaryService  summaryService;
 	
 	@Ignore
 	@Test
@@ -117,6 +128,7 @@ public class LoginTest {
 		}				
 	}
 	
+	@Ignore
 	@Test
 	public void testGetReals() throws Exception{
 		Map<String, Object> params = new HashMap<String , Object>();
@@ -127,9 +139,29 @@ public class LoginTest {
 		List<RealTimeStockVO> realTimeData  = realtimestockService.getRealTimeStockData(params);
 		for(RealTimeStockVO r : realTimeData ) {
 			System.out.println(r);
+		}		
+	}
+		
+	
+	@Ignore
+	@Test
+	public void testSumamry() throws Exception{
+		List<String> test = new ArrayList<String>();
+		test.add("AAPL");
+		test.add("HD");
+		List<StockSummaryVO> list = summarydao.selectCurrentStockSummary(test);
+		for(StockSummaryVO s : list) {
+			System.out.println(s);
+		}
+	}	
+	
+	@Test
+	public void testStockNames() throws Exception{
+		List<StockNameVO> list = summaryService.selectAllStockNames();
+		for(StockNameVO l : list) {
+			System.out.println(l);
 		}
 		
-	}
-	
+	}	
 	
 }

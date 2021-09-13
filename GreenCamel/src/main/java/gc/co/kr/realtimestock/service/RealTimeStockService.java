@@ -16,4 +16,6 @@ public interface RealTimeStockService {
 	List<Map<String,Object>> getInitValuesLines(Map<String,Object> params);
 	
 	List<RealTimeStockVO> getRealTimeStockData(Map<String,Object> params);
+	
+	RealTimeStockVO getRealTimeStockDataLine(Map<String,Object> params);
 }
